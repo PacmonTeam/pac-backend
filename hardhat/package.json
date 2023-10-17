@@ -1,0 +1,9 @@
+{
+  "name": "pac-backend-hardhat",
+  "scripts": {
+    "start": "hardhat node"
+  },
+  "dependencies": {
+    "hardhat": "^2.18.1"
+  }
+}

@@ -9,3 +9,8 @@ services:
     ports:
       - "5432:5432"
     restart: always
+  hardhat:
+    container_name: hardhat
+    build: hardhat
+    ports:
+      - "8545:8545"
