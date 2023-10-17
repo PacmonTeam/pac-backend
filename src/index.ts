@@ -1,16 +1,14 @@
-import { PrismaClient } from "@prisma/client";
 import express from "express";
+import * as template from "./templates";
 
-const prisma = new PrismaClient();
 const app = express();
 
 app.use(express.json());
 
-app.post(`/templates/create`, async (req, res) => {});
+app.post(`/templates/create`, template.createTemplatesMiddleware);
 
 app.get(`/templates`, async (req, res) => {
-  const templates = await prisma.template.findMany();
-  res.json(templates);
+  res.json([{ a: 1 }]);
 });
 
 const APP_PORT = process.env.APP_PORT || 3000;
