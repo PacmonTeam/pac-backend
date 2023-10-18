@@ -21,6 +21,7 @@ contract PacERC20 is ERC20 {
         uint8 _decimals
     ) ERC20(_name, _symbol) {
         _mint(_to, _totalSupply);
+        admin = msg.sender;
         __decimals = _decimals;
     }
 

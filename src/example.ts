@@ -11,27 +11,25 @@ const ethereumService = new EthereumService.Service()
 const main = async () => {
   await ethereumService.reset()
 
-  const erc20Source = readFileSync(
-    path.resolve(__dirname, '../hardhat/flatten/PacERC20.sol'),
-    'utf8',
-  )
   const erc20CompileOutput = await ethereumService.compile({
-    ['PacERC20']: erc20Source,
+    ['PacERC20']: readFileSync(
+      path.resolve(__dirname, '../hardhat/flatten/PacERC20.sol'),
+      'utf8',
+    ),
   })
 
-  const tpacSource = readFileSync(
+  const tpacDeployCommands = readFileSync(
     path.resolve(__dirname, '../assets/commands/tpac-deployment.yaml'),
     'utf8',
   )
 
   const signer = await ethereumService.getDefaultSigner()
-
   let context = {
     ADMIN: signer.address,
   }
 
   const tpacDeployCmd = parseCommand<Command.DeployContract>(
-    tpacSource,
+    tpacDeployCommands,
     context,
   )
   console.log('🚀 turbo ~ file: test.ts:32 ~ tpacDeployCmd:', tpacDeployCmd)
@@ -43,6 +41,17 @@ const main = async () => {
   context[tpacDeployCmd.output] = await deployedTPAC.getAddress()
 
   console.log('🚀 turbo ~ file: test.ts:42 ~ context:', context)
+
+  if (tpacDeployCmd.functions) {
+    for (const func of tpacDeployCmd.functions) {
+      const tx = await ethereumService.call(
+        deployedTPAC,
+        func.name,
+        func.arguments,
+      )
+      console.log('🚀 turbo ~ file: example.ts:48 ~ tx:', tx)
+    }
+  }
 }
 
 main()

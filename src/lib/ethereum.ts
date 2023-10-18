@@ -86,10 +86,8 @@ export namespace EthereumService {
           outputSelection: outputSelection,
         },
       }
-
       const compiled = solc.compile(JSON.stringify(input))
-
-      var output = JSON.parse(compiled)
+      const output = JSON.parse(compiled)
 
       const out = _.reduce(
         contracts,
@@ -107,6 +105,17 @@ export namespace EthereumService {
       )
 
       return out
+    }
+
+    call = async (
+      contract: ethers.BaseContract,
+      method: string,
+      args: any[],
+    ) => {
+      const signer = await this.getDefaultSigner()
+      const tx = await contract.connect(signer)[method](...args)
+      await tx.wait()
+      return tx
     }
   }
 }
