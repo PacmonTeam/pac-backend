@@ -1,0 +1,13 @@
+name: "PacERC20"
+constructor:
+  - "{{ADMIN}}"
+  - 100000000000000000000000
+  - "Test PAC Token"
+  - "tPAC"
+  - 18
+functions:
+  - name: mint
+    arguments:
+      - "{{ADMIN}}"
+      - 50000000000000000000000
+output: "TPAC_ERC20"
