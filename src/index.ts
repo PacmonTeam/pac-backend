@@ -1,18 +1,19 @@
-import express from "express";
-import * as template from "./templates";
+import express from 'express'
 
-const app = express();
+import * as template from './templates'
 
-app.use(express.json());
+const app = express()
 
-app.post(`/templates/create`, template.createTemplatesMiddleware);
+app.use(express.json())
+
+app.post(`/templates/create`, template.createTemplatesMiddleware)
 
 app.get(`/templates`, async (req, res) => {
-  res.json([{ a: 1 }]);
-});
+  res.json([{ a: 1 }])
+})
 
-const APP_PORT = process.env.APP_PORT || 3000;
+const APP_PORT = process.env.APP_PORT || 3000
 
 app.listen(APP_PORT, () =>
-  console.log(`🚀 Server ready at: http://localhost:${APP_PORT}`)
-);
+  console.log(`🚀 Server ready at: http://localhost:${APP_PORT}`),
+)

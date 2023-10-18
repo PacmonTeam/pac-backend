@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import _ from 'lodash'
 import solc from 'solc'
 
@@ -6,7 +7,10 @@ export interface ICompileContractInput {
 }
 
 export interface ICompileContractOutput {
-  [name: string]: string
+  [name: string]: {
+    bytecode: string
+    contractFactory: ethers.ContractFactory
+  }
 }
 
 interface ICompileSource {
@@ -59,7 +63,12 @@ export const compile = async (contracts: ICompileContractInput) => {
     contracts,
     (prev, code, name) => {
       const bytecode = output.contracts[name][name].evm.bytecode.object
-      prev[name] = bytecode
+      prev[name] = {
+        bytecode,
+        contractFactory: ethers.ContractFactory.fromSolidity(
+          output.contracts[name][name],
+        ),
+      }
       return prev
     },
     {} as ICompileContractOutput,
