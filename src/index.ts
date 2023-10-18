@@ -1,16 +1,21 @@
 import express from 'express'
+import fs from 'fs'
+import morgan from 'morgan'
+import swaggerUi from 'swagger-ui-express'
+import YAML from 'yaml'
 
-import * as template from './templates'
+import routers from './routes'
+
+const file = fs.readFileSync('./swagger.yaml', 'utf8')
+const swaggerDocument = YAML.parse(file)
 
 const app = express()
 
 app.use(express.json())
-
-app.post(`/templates/create`, template.createTemplatesMiddleware)
-
-app.get(`/templates`, async (req, res) => {
-  res.json([{ a: 1 }])
-})
+app.use(morgan('tiny'))
+app.use(express.static('public'))
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use(routers)
 
 const APP_PORT = process.env.APP_PORT || 3000
 
