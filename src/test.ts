@@ -4,19 +4,18 @@ import yaml from 'js-yaml'
 import path from 'path'
 
 import { Command, parseCommand } from './lib/commandParser'
-import { compile } from './lib/contracts/compile'
-import { deploy } from './lib/contracts/deploy'
-import { getDefaultSigner, provider } from './lib/contracts/hardhat'
+import { EthereumService } from './lib/ethereum'
+
+const ethereumService = new EthereumService.Service()
 
 const main = async () => {
-  const resetResp = await provider.send('hardhat_reset', [])
-  console.log('🚀 turbo ~ file: test.ts:13 ~ resetResp:', resetResp)
+  await ethereumService.reset()
 
   const erc20Source = readFileSync(
     path.resolve(__dirname, '../hardhat/flatten/PacERC20.sol'),
     'utf8',
   )
-  const erc20CompileOutput = await compile({
+  const erc20CompileOutput = await ethereumService.compile({
     ['PacERC20']: erc20Source,
   })
 
@@ -25,7 +24,7 @@ const main = async () => {
     'utf8',
   )
 
-  const signer = await getDefaultSigner()
+  const signer = await ethereumService.getDefaultSigner()
 
   let context = {
     ADMIN: signer.address,
@@ -37,7 +36,7 @@ const main = async () => {
   )
   console.log('🚀 turbo ~ file: test.ts:32 ~ tpacDeployCmd:', tpacDeployCmd)
 
-  const deployedTPAC = await deploy({
+  const deployedTPAC = await ethereumService.deploy({
     contractFactory: erc20CompileOutput.PacERC20.contractFactory,
     constructorArguments: tpacDeployCmd.constructor,
   })
