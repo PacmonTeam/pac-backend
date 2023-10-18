@@ -4,6 +4,7 @@ import solc from 'solc'
 
 import { PRIVATE_RPC_URL } from '@/env'
 
+// This is public knowledge, no security risk
 const FIXED_WALLETS = [
   {
     address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
