@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { readFileSync } from 'fs'
 import yaml from 'js-yaml'
+import _ from 'lodash'
 import path from 'path'
 
 import { Command, parseCommand } from './lib/commandParser'
@@ -10,6 +11,9 @@ const ethereumService = new EthereumService.Service()
 
 const main = async () => {
   await ethereumService.reset()
+
+  const signers = await ethereumService.getSigners()
+  console.log('🚀 turbo ~ file: example.ts:15 ~ signer:', signers)
 
   const erc20CompileOutput = await ethereumService.compile({
     ['PacERC20']: readFileSync(
