@@ -96,6 +96,52 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Project"
+  /node/info:
+    get:
+      tags:
+        - Node
+      summary: Get node info
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  rpc:
+                    type: string
+                    examples: ["http://localhost:8545"]
+                  signers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        address:
+                          type: string
+                          examples: ["0x1234567890"]
+                        privateKey:
+                          type: string
+                          examples:
+                            [
+                              "0x1234567890123456789012345678901234567890123456789012345678901234567890",
+                            ]
+  /node/reset:
+    post:
+      tags:
+        - Node
+      summary: Reset node to initial state
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    examples: [true]
 
 components:
   schemas:

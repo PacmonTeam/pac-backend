@@ -227,3 +227,5 @@ export namespace EthereumService {
     }
   }
 }
+
+export const ethereumService = new EthereumService.Service()
