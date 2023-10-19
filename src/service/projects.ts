@@ -106,7 +106,7 @@ export namespace ProjectRouter {
 
     const project = await prisma.project.update({
       where: {
-        id: id,
+        id: Number(id),
       },
       data: {
         name,
@@ -148,7 +148,7 @@ export namespace ProjectRouter {
     const { projectId } = req.params
     const result = await prisma.project.findUnique({
       where: {
-        id: projectId,
+        id: Number(projectId),
       },
       include: {
         templates: true,
@@ -206,7 +206,7 @@ export namespace ProjectRouter {
     const { projectId } = req.body
     await prisma.project.delete({
       where: {
-        id: projectId,
+        id: Number(projectId),
       },
     })
     res.json({
@@ -225,7 +225,7 @@ export namespace ProjectRouter {
     const { projectId } = req.body
     const project = await prisma.project.findUnique({
       where: {
-        id: projectId,
+        id: Number(projectId),
       },
       include: {
         templates: true,
@@ -284,7 +284,7 @@ export namespace ProjectRouter {
 
     const projectResult = await prisma.project.findUnique({
       where: {
-        id: projectId,
+        id: Number(projectId),
       },
       include: {
         templates: true,
