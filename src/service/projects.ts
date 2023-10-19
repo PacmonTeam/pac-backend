@@ -3,6 +3,8 @@ import { Request, Response } from 'express'
 import _ from 'lodash'
 import { ParsedQs } from 'qs'
 
+import { Command, parseCommand } from '@/lib/commandParser'
+import { ethereumService } from '@/lib/ethereum'
 import { getPrisma } from '@/lib/prisma'
 
 import { ErrorResponseBody } from './utils'
@@ -218,10 +220,10 @@ export namespace ProjectRouter {
 
   export async function deploy(
     req: Request<{}, any, DeployRequestBody, ParsedQs, Record<string, any>>,
-    res: Response<MinimalProject | ErrorResponseBody>,
+    res: Response<Project | ErrorResponseBody>,
   ) {
     const { projectId } = req.body
-    const result = await prisma.project.findUnique({
+    const project = await prisma.project.findUnique({
       where: {
         id: projectId,
       },
@@ -230,13 +232,69 @@ export namespace ProjectRouter {
       },
     })
 
-    if (!result) {
+    if (!project) {
       return res.status(404).json({
         message: 'Project not found',
       })
     }
 
-    // TODO: Deploy project
-    throw new Error('Not implemented')
+    try {
+      const signer = await ethereumService.getDefaultSigner()
+      let context = {
+        ADMIN: signer.address,
+      }
+      // TODO: batch transactions
+      for (const template of project.templates) {
+        const deployCmd = parseCommand<Command.DeployContract>(
+          template.script,
+          context,
+        )
+        const compileOutput = await ethereumService.compile({
+          [deployCmd.name]: template.script,
+        })
+        const contract = await ethereumService.deploy({
+          contractFactory: compileOutput[deployCmd.name].contractFactory,
+          constructorArguments: deployCmd.constructor,
+        })
+        const address = await contract.getAddress()
+        context[deployCmd.output] = address
+        if (deployCmd.functions) {
+          for (const func of deployCmd.functions) {
+            const tx = await ethereumService.call(
+              contract,
+              func.name,
+              func.arguments,
+            )
+          }
+        }
+        await prisma.template.update({
+          where: {
+            id: template.id,
+          },
+          data: {
+            address: address,
+          },
+        })
+      }
+    } catch (e: any) {
+      return res.status(500).json({
+        message: e.message,
+      })
+    }
+
+    const projectResult = await prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+      include: {
+        templates: true,
+      },
+    })
+    if (!projectResult) {
+      return res.status(500).json({
+        message: 'Project not found, wtf?',
+      })
+    }
+    res.json(projectResult)
   }
 }
