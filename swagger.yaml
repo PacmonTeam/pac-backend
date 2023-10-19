@@ -59,7 +59,7 @@ paths:
         - Project & Template
       summary: Update project
       requestBody:
-        description: Item to be created
+        description: Item to be updated
         required: true
         content:
           application/json:
@@ -72,13 +72,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Project"
+  /projects/delete:
+    post:
+      tags:
+        - Project & Template
+      summary: Delete project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId:
+                  type: integer
+                  format: int64
+                  examples: [1, 2, 3, 4]
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    examples: [true]
   /projects/deploy:
     post:
       tags:
         - Project & Template
       summary: Deploy project
       requestBody:
-        description: Item to be created
         required: true
         content:
           application/json:
