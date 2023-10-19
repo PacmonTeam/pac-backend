@@ -74,7 +74,9 @@ export namespace ProjectRouter {
       _.map(templates, (template) =>
         prisma.template.create({
           data: {
-            ...template,
+            configuration: template.configuration,
+            script: template.script,
+            sequence: template.sequence,
             projectId: project.id,
           },
         }),
@@ -123,7 +125,10 @@ export namespace ProjectRouter {
       _.map(templates, (template) =>
         prisma.template.create({
           data: {
-            ...template,
+            configuration: template.configuration,
+            script: template.script,
+            sequence: template.sequence,
+            address: null,
             projectId: project.id,
           },
         }),
@@ -245,12 +250,14 @@ export namespace ProjectRouter {
       }
       // TODO: batch transactions
       for (const template of project.templates) {
+        const script = template.script.trim()
+        const configuration = template.configuration.trim()
         const deployCmd = parseCommand<Command.DeployContract>(
-          template.script,
+          configuration,
           context,
         )
         const compileOutput = await ethereumService.compile({
-          [deployCmd.name]: template.script,
+          [deployCmd.name]: script,
         })
         const contract = await ethereumService.deploy({
           contractFactory: compileOutput[deployCmd.name].contractFactory,

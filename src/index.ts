@@ -18,6 +18,10 @@ app.use(cors())
 app.use(express.static('public'))
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(routers)
+app.use(function (error, request, response, next) {
+  console.error('error', error.message)
+  response.status(500).send('Internal Server Error')
+})
 
 const APP_PORT = process.env.APP_PORT || 3000
 

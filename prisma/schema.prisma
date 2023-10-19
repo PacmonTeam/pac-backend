@@ -16,7 +16,7 @@ model Template {
   id            Int     @id @default(autoincrement())
   script        String
   configuration String
-  sequence      Int     @unique
+  sequence      Int
   status        Status  @default(ACTIVE)
   address       String?
   projectId     Int
