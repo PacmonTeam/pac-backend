@@ -18,6 +18,7 @@ model Template {
   configuration String
   sequence      Int     @unique
   status        Status  @default(ACTIVE)
+  address       String?
   projectId     Int
   project       Project @relation(fields: [projectId], references: [id])
 
