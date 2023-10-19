@@ -20,7 +20,7 @@ model Template {
   status        Status  @default(ACTIVE)
   address       String?
   projectId     Int
-  project       Project @relation(fields: [projectId], references: [id])
+  project       Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, sequence(sort: Asc)])
 }

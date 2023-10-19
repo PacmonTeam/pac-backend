@@ -191,6 +191,27 @@ export namespace ProjectRouter {
     )
   }
 
+  interface DeleteRequestBody {
+    projectId: number
+  }
+  interface DeleteResponseBody {
+    success: boolean
+  }
+  export async function deleteProject(
+    req: Request<{}, any, DeleteRequestBody, ParsedQs, Record<string, any>>,
+    res: Response<DeleteResponseBody | ErrorResponseBody>,
+  ) {
+    const { projectId } = req.body
+    await prisma.project.delete({
+      where: {
+        id: projectId,
+      },
+    })
+    res.json({
+      success: true,
+    })
+  }
+
   interface DeployRequestBody {
     projectId: number
   }

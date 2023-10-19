@@ -8,6 +8,7 @@ const router = express.Router()
 router.post(`/projects/create`, ProjectRouter.create)
 router.post(`/projects/update`, ProjectRouter.update)
 router.post(`/projects/deploy`, ProjectRouter.deploy)
+router.post(`/projects/delete`, ProjectRouter.deleteProject)
 router.get(`/projects/:projectId`, ProjectRouter.get)
 router.get(`/projects`, ProjectRouter.list)
 
