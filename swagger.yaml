@@ -3,6 +3,7 @@ info:
   title: PACMON
   version: 0.0.1
 servers:
+  - url: https://pacmon.suijin.xyz/api
   - url: http://localhost:3000
 tags:
   - name: Template
