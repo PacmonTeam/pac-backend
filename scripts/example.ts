@@ -4,8 +4,8 @@ import yaml from 'js-yaml'
 import _ from 'lodash'
 import path from 'path'
 
-import { Command, parseCommand } from './lib/commandParser'
-import { EthereumService } from './lib/ethereum'
+import { Command, parseCommand } from '../src/lib/commandParser'
+import { EthereumService } from '../src/lib/ethereum'
 
 const ethereumService = new EthereumService.Service()
 
@@ -21,7 +21,7 @@ const main = async () => {
   )
 
   const tpacDeployCommands = readFileSync(
-    path.resolve(__dirname, '../assets/commands/tpac-deployment.yaml'),
+    path.resolve(__dirname, './assets/commands/tpac-deployment.yaml'),
     'utf8',
   )
   const code1 = JSON.stringify(code)
@@ -41,7 +41,7 @@ const main = async () => {
   // })
 
   // const tpacDeployCommands = readFileSync(
-  //   path.resolve(__dirname, '../assets/commands/tpac-deployment.yaml'),
+  //   path.resolve(__dirname, './assets/commands/tpac-deployment.yaml'),
   //   'utf8',
   // )
 

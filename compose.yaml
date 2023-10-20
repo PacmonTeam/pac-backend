@@ -1,16 +1,43 @@
 services:
-  postgres:
-    container_name: postgres
+  db:
     image: postgres:latest
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PW}
       - POSTGRES_DB=${POSTGRES_DB} #optional (specify default database instead of $POSTGRES_DB)
     ports:
-      - "5432:5432"
+      - '5432:5432'
     restart: always
+    networks:
+      - pacmonnet
   hardhat:
-    container_name: hardhat
     build: hardhat
     ports:
-      - "8545:8545"
+      - '8545:8545'
+    restart: always
+    networks:
+      - pacmonnet
+  app:
+    build:
+      context: .
+      args:
+        - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PW}@db:5432/${POSTGRES_DB}?schema=public
+    environment:
+      - APP_PORT=3000
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PW=${POSTGRES_PW}
+      - POSTGRES_DB=postgres
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PW}@db:5432/${POSTGRES_DB}?schema=public
+      - PRIVATE_RPC_URL=http://hardhat:8545
+    ports:
+      - '3000:3000'
+    restart: always
+    depends_on:
+      - db
+      - hardhat
+    networks:
+      - pacmonnet
+networks:
+  pacmonnet:
+    name: pacmonnet
+    external: true

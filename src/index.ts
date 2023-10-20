@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import YAML from 'yaml'
 
+import { APP_PORT } from './env'
 import routers from './routes'
 
 const file = fs.readFileSync('./swagger.yaml', 'utf8')
@@ -22,8 +23,6 @@ app.use(function (error, request, response, next) {
   console.error('error', error.message)
   response.status(500).send('Internal Server Error')
 })
-
-const APP_PORT = process.env.APP_PORT || 3000
 
 app.listen(APP_PORT, () =>
   console.log(`🚀 Server ready at: http://localhost:${APP_PORT}`),
