@@ -38,6 +38,7 @@ export namespace ProjectRouter {
       script: string
       configuration: string
       sequence: number
+      status: $Enums.Status
     }[]
   }
 
@@ -60,6 +61,7 @@ export namespace ProjectRouter {
             configuration: template.configuration,
             script: template.script,
             sequence: template.sequence,
+            status: template.status,
             projectId: project.id,
           },
         }),
@@ -80,6 +82,7 @@ export namespace ProjectRouter {
       script: string
       configuration: string
       sequence: number
+      status: $Enums.Status
     }[]
   }
 
@@ -113,11 +116,14 @@ export namespace ProjectRouter {
             configuration: template.configuration,
             script: template.script,
             sequence: template.sequence,
+            status: template.status,
             projectId: project.id,
           },
           update: {
             configuration: template.configuration,
             script: template.script,
+            sequence: template.sequence,
+            status: template.status,
           },
         }),
       ),
@@ -169,7 +175,7 @@ export namespace ProjectRouter {
     res.json({
       id: project.id,
       name: project.name,
-      templates: _.map(project.templates),
+      templates: project.templates,
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
     })
@@ -241,7 +247,11 @@ export namespace ProjectRouter {
         id: Number(projectId),
       },
       include: {
-        templates: true,
+        templates: {
+          where: {
+            status: 'ACTIVE',
+          },
+        },
       },
     })
 
