@@ -1,36 +1,20 @@
-import { $Enums } from '@prisma/client'
+import { $Enums, Node, NodeContract, Project, Template } from '@prisma/client'
 import { Request, Response } from 'express'
 import _ from 'lodash'
 import { ParsedQs } from 'qs'
 
+import { PRIVATE_RPC_URL, PUBLIC_RPC_URL } from '@/env'
 import { Command, parseCommand } from '@/lib/commandParser'
-import { ethereumService } from '@/lib/ethereum'
+import { EthereumService } from '@/lib/ethereum'
 import { getPrisma } from '@/lib/prisma'
 
 import { ErrorResponseBody } from './utils'
 
 const prisma = getPrisma()
 
-interface Template {
-  id: number
-  script: string
-  configuration: string
-  sequence: number
-  projectId: number
-  address: string | null
-  status: $Enums.Status
-}
-
-interface Project {
-  id: number
-  name: string
-  templates: Template[]
-}
-
 interface MinimalTemplate {
   id: number
   sequence: number
-  address: string | null
   status: $Enums.Status
 }
 
@@ -45,7 +29,6 @@ export namespace ProjectRouter {
     return {
       id: t.id,
       sequence: t.sequence,
-      address: t.address,
       status: t.status,
     }
   }
@@ -115,25 +98,39 @@ export namespace ProjectRouter {
       },
     })
 
-    await prisma.template.deleteMany({
-      where: {
-        projectId: id,
-      },
-    })
+    const sequences = _.map(templates, (template) => template.sequence)
 
     const createdTemplates: Template[] = await prisma.$transaction(
       _.map(templates, (template) =>
-        prisma.template.create({
-          data: {
+        prisma.template.upsert({
+          where: {
+            projectId_sequence: {
+              projectId: project.id,
+              sequence: template.sequence,
+            },
+          },
+          create: {
             configuration: template.configuration,
             script: template.script,
             sequence: template.sequence,
-            address: null,
             projectId: project.id,
+          },
+          update: {
+            configuration: template.configuration,
+            script: template.script,
           },
         }),
       ),
     )
+
+    await prisma.template.deleteMany({
+      where: {
+        projectId: id,
+        sequence: {
+          notIn: sequences,
+        },
+      },
+    })
 
     res.json({
       id: project.id,
@@ -145,13 +142,16 @@ export namespace ProjectRouter {
   interface GetRequestParams {
     projectId: number
   }
+  interface GetResponseBody extends Project {
+    templates: Template[]
+  }
 
   export async function get(
-    req: Request<GetRequestParams, any, any, ParsedQs, Record<string, any>>,
-    res: Response<Project | ErrorResponseBody>,
+    req: Request<GetRequestParams>,
+    res: Response<GetResponseBody | ErrorResponseBody>,
   ) {
     const { projectId } = req.params
-    const result = await prisma.project.findUnique({
+    const project = await prisma.project.findUnique({
       where: {
         id: Number(projectId),
       },
@@ -160,16 +160,18 @@ export namespace ProjectRouter {
       },
     })
 
-    if (!result) {
+    if (!project) {
       return res.status(404).json({
         message: 'Project not found',
       })
     }
 
     res.json({
-      id: result.id,
-      name: result.name,
-      templates: _.map(result.templates),
+      id: project.id,
+      name: project.name,
+      templates: _.map(project.templates),
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
     })
   }
 
@@ -220,14 +222,20 @@ export namespace ProjectRouter {
   }
 
   interface DeployRequestBody {
+    nodeName: string
     projectId: number
+  }
+
+  interface DeployResponseBody extends Node {
+    project: Project
+    contracts: NodeContract[]
   }
 
   export async function deploy(
     req: Request<{}, any, DeployRequestBody, ParsedQs, Record<string, any>>,
-    res: Response<Project | ErrorResponseBody>,
+    res: Response<DeployResponseBody | ErrorResponseBody>,
   ) {
-    const { projectId } = req.body
+    const { projectId, nodeName } = req.body
     const project = await prisma.project.findUnique({
       where: {
         id: Number(projectId),
@@ -243,45 +251,58 @@ export namespace ProjectRouter {
       })
     }
 
+    // TODO: (not in poc) open a node and use its rpcs
+    const node = await prisma.node.create({
+      data: {
+        projectId: project.id,
+        privateRpcUrl: PRIVATE_RPC_URL,
+        publicRpcUrl: PUBLIC_RPC_URL,
+        name: nodeName,
+      },
+    })
+
+    const ethereumService = new EthereumService.Service(node.privateRpcUrl)
+
     try {
       const signer = await ethereumService.getDefaultSigner()
       let context = {
         ADMIN: signer.address,
       }
+      const templates = _.sortBy(project.templates, 'sequence')
       // TODO: batch transactions
-      for (const template of project.templates) {
+      for (const template of templates) {
         const script = template.script.trim()
         const configuration = template.configuration.trim()
         const deployCmd = parseCommand<Command.DeployContract>(
           configuration,
           context,
         )
+        const contractName = deployCmd.name
         const compileOutput = await ethereumService.compile({
-          [deployCmd.name]: script,
+          [contractName]: script,
         })
         const contract = await ethereumService.deploy({
-          contractFactory: compileOutput[deployCmd.name].contractFactory,
+          contractFactory: compileOutput[contractName].contractFactory,
           constructorArguments: deployCmd.constructor,
         })
         const address = await contract.getAddress()
         context[deployCmd.output] = address
-        if (deployCmd.functions) {
-          for (const func of deployCmd.functions) {
-            const tx = await ethereumService.call(
-              contract,
-              func.name,
-              func.arguments,
-            )
-          }
-        }
-        await prisma.template.update({
-          where: {
-            id: template.id,
-          },
+        await prisma.nodeContract.create({
           data: {
-            address: address,
+            address,
+            configuration,
+            script,
+            sequence: template.sequence,
+            name: contractName,
+            nodeId: node.id,
           },
         })
+
+        if (deployCmd.functions) {
+          for (const func of deployCmd.functions) {
+            await ethereumService.call(contract, func.name, func.arguments)
+          }
+        }
       }
     } catch (e: any) {
       return res.status(500).json({
@@ -289,19 +310,30 @@ export namespace ProjectRouter {
       })
     }
 
-    const projectResult = await prisma.project.findUnique({
+    const nodeResult = await prisma.node.findUnique({
       where: {
-        id: Number(projectId),
+        id: Number(node.id),
       },
       include: {
-        templates: true,
+        project: true,
+        contracts: true,
       },
     })
-    if (!projectResult) {
+    if (!nodeResult) {
       return res.status(500).json({
-        message: 'Project not found, wtf?',
+        message: 'Node not found, wtf?',
       })
     }
-    res.json(projectResult)
+    res.json({
+      id: nodeResult.id,
+      name: nodeResult.name,
+      privateRpcUrl: nodeResult.privateRpcUrl,
+      publicRpcUrl: nodeResult.publicRpcUrl,
+      projectId: nodeResult.projectId,
+      project: nodeResult.project,
+      contracts: nodeResult.contracts,
+      createdAt: nodeResult.createdAt,
+      updatedAt: nodeResult.updatedAt,
+    })
   }
 }

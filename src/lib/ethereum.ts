@@ -2,8 +2,6 @@ import { ethers } from 'ethers'
 import _ from 'lodash'
 import solc from 'solc'
 
-import { PRIVATE_RPC_URL } from '@/env'
-
 // This is public knowledge, no security risk
 const FIXED_WALLETS = [
   {
@@ -140,8 +138,8 @@ export namespace EthereumService {
   export class Service {
     private _provider: ethers.JsonRpcProvider
 
-    constructor() {
-      this._provider = new ethers.JsonRpcProvider(PRIVATE_RPC_URL)
+    constructor(rpcUrl: string) {
+      this._provider = new ethers.JsonRpcProvider(rpcUrl)
     }
 
     getDefaultSigner = async () => {
@@ -221,11 +219,9 @@ export namespace EthereumService {
       await tx.wait()
       return tx
     }
+  }
 
-    getSigners = () => {
-      return FIXED_WALLETS
-    }
+  export const getSigners = () => {
+    return FIXED_WALLETS
   }
 }
-
-export const ethereumService = new EthereumService.Service()

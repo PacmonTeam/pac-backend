@@ -14,13 +14,10 @@ contract PacERC20 is ERC20 {
     }
 
     constructor(
-        address _to,
-        uint256 _totalSupply,
         string memory _name,
         string memory _symbol,
         uint8 _decimals
     ) ERC20(_name, _symbol) {
-        _mint(_to, _totalSupply);
         admin = msg.sender;
         __decimals = _decimals;
     }

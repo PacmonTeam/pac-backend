@@ -1,7 +1,7 @@
 import express from 'express'
 
-import { NodeRouter } from './service/node'
-import { ProjectRouter } from './service/projects'
+import { NodeRouter } from './router/nodes'
+import { ProjectRouter } from './router/projects'
 
 const router = express.Router()
 
@@ -20,7 +20,7 @@ router.post('/projects/delete', errorWrapper(ProjectRouter.deleteProject))
 router.get('/projects/:projectId', errorWrapper(ProjectRouter.get))
 router.get('/projects', errorWrapper(ProjectRouter.list))
 
-router.get('/node/info', NodeRouter.getInfo)
-router.post('/node/reset', NodeRouter.reset)
+router.get('/nodes/:nodeId/info', NodeRouter.getInfo)
+router.post('/nodes/:nodeId/reset', NodeRouter.reset)
 
 export default router
