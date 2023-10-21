@@ -230,6 +230,50 @@ paths:
                     type: integer
                     format: int64
                     examples: [1, 2, 3, 4]
+  /nodes/call:
+    post:
+      tags:
+        - Node
+      summary: Call function on node
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nodeId:
+                  type: integer
+                  format: int64
+                  examples: [1, 2, 3, 4]
+                contractAddress:
+                  type: string
+                  examples: ["0x1234567890"]
+                encodedData:
+                  type: string
+                  examples:
+                    ["0x1234567890 // Generate by calling encodeFunctionData"]
+                callerAddress:
+                  type: string
+                  examples: ["0x1234567890"]
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  txHash:
+                    type: string
+                    examples: ["0x1234567890"]
+                  blockHash:
+                    type: string
+                    examples: ["0x1234567890"]
+                  blockNumber:
+                    type: integer
+                    format: int64
+                    examples: [1, 2, 3, 4]
 
 components:
   schemas:
