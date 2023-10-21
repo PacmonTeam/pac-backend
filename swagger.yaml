@@ -6,8 +6,10 @@ servers:
   - url: https://pacmon.suijin.xyz/api
   - url: http://localhost:3033
 tags:
-  - name: Template
+  - name: Project & Template
     description: Solidity source code and configuration files for each step are provided to enable our automation engine to deploy them to the test node
+  - name: Node
+    description: Deployed projects are deployed to a test node. The test node is a blockchain node that is used to test the deployed contracts
 paths:
   /projects:
     get:
