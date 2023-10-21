@@ -4,8 +4,7 @@ info:
   version: 0.0.1
 servers:
   - url: https://pacmon.suijin.xyz/api
-  - url: http://localhost:3000
-  - url: http://api-pacmon.suijin.xyz:3000
+  - url: http://localhost:3033
 tags:
   - name: Template
     description: Solidity source code and configuration files for each step are provided to enable our automation engine to deploy them to the test node
@@ -16,14 +15,14 @@ paths:
         - Project & Template
       summary: Get all projects
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectMinimal'
+                  $ref: "#/components/schemas/ProjectMinimal"
   /projects/{projectId}:
     get:
       tags:
@@ -37,12 +36,12 @@ paths:
           required: true
           description: Numeric ID of the project
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
+                $ref: "#/components/schemas/Project"
   /projects/create:
     post:
       tags:
@@ -54,14 +53,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProjectCreateBody'
+              $ref: "#/components/schemas/ProjectCreateBody"
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
+                $ref: "#/components/schemas/Project"
   /projects/update:
     post:
       tags:
@@ -73,14 +72,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProjectUpdateBody'
+              $ref: "#/components/schemas/ProjectUpdateBody"
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
+                $ref: "#/components/schemas/Project"
   /projects/delete:
     post:
       tags:
@@ -98,7 +97,7 @@ paths:
                   format: int64
                   examples: [1, 2, 3, 4]
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
@@ -124,50 +123,67 @@ paths:
                   type: integer
                   format: int64
                   examples: [1, 2, 3, 4]
+                nodeName:
+                  type: string
+                  examples: [UAT, PVT]
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
-  /node/info:
+                $ref: "#/components/schemas/Project"
+  /nodes:
     get:
       tags:
         - Node
-      summary: Get node info
+      summary: Get all nodes
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  rpc:
-                    type: string
-                    examples: ['http://localhost:8545']
-                  signers:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        address:
-                          type: string
-                          examples: ['0x1234567890']
-                        privateKey:
-                          type: string
-                          examples:
-                            [
-                              '0x1234567890123456789012345678901234567890123456789012345678901234567890',
-                            ]
-  /node/reset:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NodeMinimal"
+  /nodes/{nodeId}:
+    get:
+      tags:
+        - Node
+      summary: Get node
+      parameters:
+        - in: path
+          name: nodeId
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the node
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Node"
+  /nodes/reset:
     post:
       tags:
         - Node
       summary: Reset node to initial state
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nodeId:
+                  type: integer
+                  format: int64
+                  examples: [1, 2, 3, 4]
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
@@ -177,6 +193,41 @@ paths:
                   success:
                     type: boolean
                     examples: [true]
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    examples: ["2021-01-01T00:00:00.000Z"]
+  /nodes/delete:
+    post:
+      tags:
+        - Node
+      summary: Delete node and all its contracts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nodeId:
+                  type: integer
+                  format: int64
+                  examples: [1, 2, 3, 4]
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    examples: [true]
+                  id:
+                    type: integer
+                    format: int64
+                    examples: [1, 2, 3, 4]
 
 components:
   schemas:
@@ -189,7 +240,7 @@ components:
         templates:
           type: array
           items:
-            $ref: '#/components/schemas/TemplateBody'
+            $ref: "#/components/schemas/TemplateBody"
       required:
         - name
         - templates
@@ -206,7 +257,7 @@ components:
         templates:
           type: array
           items:
-            $ref: '#/components/schemas/TemplateBody'
+            $ref: "#/components/schemas/TemplateBody"
       required:
         - id
         - name
@@ -224,7 +275,15 @@ components:
         templates:
           type: array
           items:
-            $ref: '#/components/schemas/Template'
+            $ref: "#/components/schemas/Template"
+        createdAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
     ProjectMinimal:
       type: object
       properties:
@@ -238,7 +297,15 @@ components:
         templates:
           type: array
           items:
-            $ref: '#/components/schemas/TemplateMinimal'
+            $ref: "#/components/schemas/TemplateMinimal"
+        createdAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
     Template:
       type: object
       properties:
@@ -248,10 +315,10 @@ components:
           examples: [1, 2, 3, 4]
         script:
           type: string
-          examples: ['// SOLIDITY CODE']
+          examples: ["// SOLIDITY CODE"]
         configuration:
           type: string
-          examples: ['// YAML CONFIG']
+          examples: ["// YAML CONFIG"]
         sequence:
           type: integer
         status:
@@ -261,25 +328,41 @@ components:
         address:
           type: string
           nullable: true
-          examples: ['0x1234567890']
+          examples: ["0x1234567890"]
         projectId:
           type: integer
           format: int64
           examples: [1, 2, 3, 4]
+        createdAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
     TemplateBody:
       type: object
       properties:
         script:
           type: string
-          examples: ['// SOLIDITY CODE']
+          examples: ["// SOLIDITY CODE"]
         configuration:
           type: string
-          examples: ['// YAML CONFIG']
+          examples: ["// YAML CONFIG"]
         sequence:
           type: integer
         status:
           type: string
           enum: [ACTIVE, INACTIVE]
+        createdAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
       required:
         - script
         - configuration
@@ -300,8 +383,111 @@ components:
         address:
           type: string
           nullable: true
-          examples: ['0x1234567890']
+          examples: ["0x1234567890"]
         projectId:
           type: integer
           format: int64
           examples: [1, 2, 3, 4]
+        createdAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+    Node:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          examples: [1, 2, 3, 4]
+        name:
+          type: string
+          examples: [Pacmon, Pragma, Papaya]
+        rpc:
+          type: string
+          examples: ["http://localhost:8545"]
+        project:
+          $ref: "#/components/schemas/Project"
+        contracts:
+          type: array
+          items:
+            $ref: "#/components/schemas/NodeContract"
+        createdAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        signers:
+          type: array
+          items:
+            $ref: "#/components/schemas/NodeSigner"
+    NodeMinimal:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          examples: [1, 2, 3, 4]
+        name:
+          type: string
+          examples: [Pacmon, Pragma, Papaya]
+        rpc:
+          type: string
+          examples: ["http://localhost:8545"]
+        project:
+          $ref: "#/components/schemas/Project"
+        createdAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+    NodeContract:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          examples: [1, 2, 3, 4]
+        address:
+          type: string
+          examples: ["0x1234567890"]
+        name:
+          type: string
+          examples: [PacmonERC20, PragmaERC69, PapayaERC420]
+        script:
+          type: string
+          examples: ["// SOLIDITY CODE"]
+        configuration:
+          type: string
+          examples: ["// YAML CONFIG"]
+        sequence:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+        updatedAt:
+          type: string
+          format: date-time
+          examples: ["2021-01-01T00:00:00.000Z"]
+    NodeSigner:
+      type: object
+      properties:
+        address:
+          type: string
+          examples: ["0x1234567890"]
+        privateKey:
+          type: string
+          examples:
+            [
+              "0x1234567890123456789012345678901234567890123456789012345678901234567890",
+            ]
