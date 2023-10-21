@@ -5,6 +5,7 @@ info:
 servers:
   - url: https://pacmon.suijin.xyz/api
   - url: http://localhost:3000
+  - url: http://api-pacmon.suijin.xyz:3000
 tags:
   - name: Template
     description: Solidity source code and configuration files for each step are provided to enable our automation engine to deploy them to the test node
@@ -15,14 +16,14 @@ paths:
         - Project & Template
       summary: Get all projects
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ProjectMinimal"
+                  $ref: '#/components/schemas/ProjectMinimal'
   /projects/{projectId}:
     get:
       tags:
@@ -36,12 +37,12 @@ paths:
           required: true
           description: Numeric ID of the project
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Project"
+                $ref: '#/components/schemas/Project'
   /projects/create:
     post:
       tags:
@@ -53,14 +54,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProjectCreateBody"
+              $ref: '#/components/schemas/ProjectCreateBody'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Project"
+                $ref: '#/components/schemas/Project'
   /projects/update:
     post:
       tags:
@@ -72,14 +73,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ProjectUpdateBody"
+              $ref: '#/components/schemas/ProjectUpdateBody'
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Project"
+                $ref: '#/components/schemas/Project'
   /projects/delete:
     post:
       tags:
@@ -97,7 +98,7 @@ paths:
                   format: int64
                   examples: [1, 2, 3, 4]
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
@@ -124,19 +125,19 @@ paths:
                   format: int64
                   examples: [1, 2, 3, 4]
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Project"
+                $ref: '#/components/schemas/Project'
   /node/info:
     get:
       tags:
         - Node
       summary: Get node info
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
@@ -145,7 +146,7 @@ paths:
                 properties:
                   rpc:
                     type: string
-                    examples: ["http://localhost:8545"]
+                    examples: ['http://localhost:8545']
                   signers:
                     type: array
                     items:
@@ -153,12 +154,12 @@ paths:
                       properties:
                         address:
                           type: string
-                          examples: ["0x1234567890"]
+                          examples: ['0x1234567890']
                         privateKey:
                           type: string
                           examples:
                             [
-                              "0x1234567890123456789012345678901234567890123456789012345678901234567890",
+                              '0x1234567890123456789012345678901234567890123456789012345678901234567890',
                             ]
   /node/reset:
     post:
@@ -166,7 +167,7 @@ paths:
         - Node
       summary: Reset node to initial state
       responses:
-        "200":
+        '200':
           description: Successful
           content:
             application/json:
@@ -188,7 +189,7 @@ components:
         templates:
           type: array
           items:
-            $ref: "#/components/schemas/TemplateBody"
+            $ref: '#/components/schemas/TemplateBody'
       required:
         - name
         - templates
@@ -205,7 +206,7 @@ components:
         templates:
           type: array
           items:
-            $ref: "#/components/schemas/TemplateBody"
+            $ref: '#/components/schemas/TemplateBody'
       required:
         - id
         - name
@@ -223,7 +224,7 @@ components:
         templates:
           type: array
           items:
-            $ref: "#/components/schemas/Template"
+            $ref: '#/components/schemas/Template'
     ProjectMinimal:
       type: object
       properties:
@@ -237,7 +238,7 @@ components:
         templates:
           type: array
           items:
-            $ref: "#/components/schemas/TemplateMinimal"
+            $ref: '#/components/schemas/TemplateMinimal'
     Template:
       type: object
       properties:
@@ -247,10 +248,10 @@ components:
           examples: [1, 2, 3, 4]
         script:
           type: string
-          examples: ["// SOLIDITY CODE"]
+          examples: ['// SOLIDITY CODE']
         configuration:
           type: string
-          examples: ["// YAML CONFIG"]
+          examples: ['// YAML CONFIG']
         sequence:
           type: integer
         status:
@@ -260,7 +261,7 @@ components:
         address:
           type: string
           nullable: true
-          examples: ["0x1234567890"]
+          examples: ['0x1234567890']
         projectId:
           type: integer
           format: int64
@@ -270,10 +271,10 @@ components:
       properties:
         script:
           type: string
-          examples: ["// SOLIDITY CODE"]
+          examples: ['// SOLIDITY CODE']
         configuration:
           type: string
-          examples: ["// YAML CONFIG"]
+          examples: ['// YAML CONFIG']
         sequence:
           type: integer
         status:
@@ -299,7 +300,7 @@ components:
         address:
           type: string
           nullable: true
-          examples: ["0x1234567890"]
+          examples: ['0x1234567890']
         projectId:
           type: integer
           format: int64
