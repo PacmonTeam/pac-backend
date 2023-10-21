@@ -1,4 +1,9 @@
-import { ethers } from 'ethers'
+import {
+  Contract,
+  ContractTransactionResponse,
+  TransactionResponse,
+  ethers,
+} from 'ethers'
 import _ from 'lodash'
 import solc from 'solc'
 
@@ -155,7 +160,7 @@ export namespace EthereumService {
       const tx = await contractFactory
         .connect(signer)
         .deploy(...contractInput.constructorArguments)
-      const contract = await tx.waitForDeployment()
+      const contract = (await tx.waitForDeployment()) as Contract
       return contract
     }
 
@@ -210,14 +215,48 @@ export namespace EthereumService {
     }
 
     call = async (
-      contract: ethers.BaseContract,
+      contract: ethers.Contract,
       method: string,
       args: any[],
+      callerAddress?: string,
     ) => {
-      const signer = await this.getDefaultSigner()
-      const tx = await contract.connect(signer)[method](...args)
-      await tx.wait()
-      return tx
+      const signer = callerAddress
+        ? await this._provider.getSigner(callerAddress)
+        : await this.getDefaultSigner()
+      const tx: ContractTransactionResponse = await contract
+        .connect(signer)
+        [method](...args)
+      const receipt = await tx.wait()
+      return receipt
+    }
+
+    callRaw = async (
+      contractAddress: string,
+      encodedCallData: string,
+      callerAddress?: string,
+    ) => {
+      const signer = callerAddress
+        ? await this._provider.getSigner(callerAddress)
+        : await this.getDefaultSigner()
+      const txCount = await this._provider.getTransactionCount(signer.address)
+      const tt = await signer.estimateGas({
+        data: encodedCallData,
+        to: contractAddress,
+        from: signer.address,
+        nonce: txCount,
+      })
+      const tx: TransactionResponse = await signer.sendTransaction({
+        data: encodedCallData,
+        to: contractAddress,
+        from: signer.address,
+        nonce: txCount,
+      })
+      const receipt = await tx.wait()
+      return receipt
+    }
+
+    getContract = async (address: string): Promise<ethers.Contract> => {
+      return new ethers.Contract(address, [], this._provider)
     }
   }
 

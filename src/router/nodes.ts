@@ -109,7 +109,7 @@ export namespace NodeRouter {
     req: Request<ResetRequestBody>,
     res: Response<ResetResponseBody | ErrorResponseBody>,
   ) {
-    const { nodeId } = req.params
+    const { nodeId } = req.body
     const node = await prisma.node.findUnique({
       where: {
         id: Number(nodeId),
@@ -147,7 +147,7 @@ export namespace NodeRouter {
     req: Request<DeleteRequestBody>,
     res: Response<DeleteResponseBody | ErrorResponseBody>,
   ) {
-    const { nodeId } = req.params
+    const { nodeId } = req.body
     const node = await prisma.node.delete({
       where: {
         id: Number(nodeId),
@@ -156,6 +156,51 @@ export namespace NodeRouter {
     res.json({
       id: node.id,
       success: true,
+    })
+  }
+
+  interface CallRequestBody {
+    nodeId: number
+    contractAddress: string
+    encodedData: string
+    callerAddress: string
+  }
+  interface CallResponseBody {
+    txHash: string
+    blockHash: string
+    blockNumber: number
+  }
+  export async function call(
+    req: Request<{}, any, CallRequestBody>,
+    res: Response<CallResponseBody | ErrorResponseBody>,
+  ) {
+    const { nodeId, contractAddress, encodedData, callerAddress } = req.body
+    const node = await prisma.node.findUnique({
+      where: {
+        id: Number(nodeId),
+      },
+    })
+    if (!node) {
+      return res.status(404).json({
+        message: 'Node not found',
+      })
+    }
+    const ethereumService = new EthereumService.Service(node.privateRpcUrl)
+    const txReceipt = await ethereumService.callRaw(
+      contractAddress,
+      encodedData,
+      callerAddress,
+    )
+    if (!txReceipt) {
+      return res.status(500).json({
+        message: 'Transaction failed',
+      })
+    }
+
+    res.json({
+      txHash: txReceipt.hash,
+      blockHash: txReceipt.blockHash,
+      blockNumber: txReceipt.blockNumber,
     })
   }
 }

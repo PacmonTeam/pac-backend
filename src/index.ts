@@ -21,7 +21,9 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(routers)
 app.use(function (error, request, response, next) {
   console.error('error', error.message)
-  response.status(500).send('Internal Server Error')
+  response.status(500).send({
+    error: error.message,
+  })
 })
 
 app.listen(APP_PORT, () =>

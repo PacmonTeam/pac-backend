@@ -24,5 +24,6 @@ router.get('/nodes/:nodeId', errorWrapper(NodeRouter.get))
 router.get('/nodes', errorWrapper(NodeRouter.list))
 router.post('/nodes/reset', errorWrapper(NodeRouter.reset))
 router.post('/nodes/delete', errorWrapper(NodeRouter.deleteNode))
+router.post('/nodes/call', errorWrapper(NodeRouter.call))
 
 export default router

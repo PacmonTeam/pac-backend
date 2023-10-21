@@ -4,16 +4,15 @@ import yaml from 'js-yaml'
 import _ from 'lodash'
 import path from 'path'
 
+import { PRIVATE_RPC_URL } from '@/env'
+
 import { Command, parseCommand } from '../src/lib/commandParser'
 import { EthereumService } from '../src/lib/ethereum'
 
-const ethereumService = new EthereumService.Service()
+const ethereumService = new EthereumService.Service(PRIVATE_RPC_URL)
 
 const main = async () => {
   await ethereumService.reset()
-
-  const signers = await ethereumService.getSigners()
-  console.log('🚀 turbo ~ file: example.ts:15 ~ signer:', signers)
 
   const code = readFileSync(
     path.resolve(__dirname, '../hardhat/flatten/PacERC20.sol'),
@@ -31,14 +30,19 @@ const main = async () => {
   console.log('🚀 turbo ~ file: example.ts:23 ~ cmd:', tpac1)
   const tpacp = JSON.parse(tpac1)
   console.log('🚀 turbo ~ file: example.ts:23 ~ cmd:', tpacp)
-  return
 
-  // const erc20CompileOutput = await ethereumService.compile({
-  //   ['PacERC20']: readFileSync(
-  //     path.resolve(__dirname, '../hardhat/flatten/PacERC20.sol'),
-  //     'utf8',
-  //   ),
-  // })
+  const erc20CompileOutput = await ethereumService.compile({
+    ['PacERC20']: readFileSync(
+      path.resolve(__dirname, '../hardhat/flatten/PacERC20.sol'),
+      'utf8',
+    ),
+  })
+  const encoded =
+    erc20CompileOutput.PacERC20.contractFactory.interface.encodeFunctionData(
+      'mint',
+      ['0x70997970C51812dc3A010C7d01b50e0d17dc79C8', 1000000n],
+    )
+  console.log('🚀 turbo ~ file: example.ts:46 ~ encoded:', encoded)
 
   // const tpacDeployCommands = readFileSync(
   //   path.resolve(__dirname, './assets/commands/tpac-deployment.yaml'),
