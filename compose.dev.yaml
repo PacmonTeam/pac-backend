@@ -10,6 +10,8 @@ services:
     restart: always
     networks:
       - pacmonnet
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
   hardhat:
     build: hardhat
     ports:
@@ -17,7 +19,14 @@ services:
     restart: always
     networks:
       - pacmonnet
+    volumes:
+      - postgresdata:/app/cache
 networks:
   pacmonnet:
     name: pacmonnet
     external: true
+volumes:
+  postgresdata:
+    driver: local
+  hardhatdata:
+    driver: local
