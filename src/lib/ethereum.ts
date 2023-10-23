@@ -115,6 +115,7 @@ export namespace EthereumService {
   export interface IDeployContractInput {
     contractFactory: ethers.ContractFactory
     constructorArguments: ethers.ContractMethodArgs<any[]>
+    deployerAddress: string
   }
 
   export interface ICompileContractInput {
@@ -155,7 +156,9 @@ export namespace EthereumService {
     reset = () => this._provider.send('hardhat_reset', [])
 
     deploy = async (contractInput: IDeployContractInput) => {
-      const signer = await this.getDefaultSigner()
+      const signer = await this._provider.getSigner(
+        contractInput.deployerAddress,
+      )
       const contractFactory = contractInput.contractFactory
       const tx = await contractFactory
         .connect(signer)
@@ -218,11 +221,9 @@ export namespace EthereumService {
       contract: ethers.Contract,
       method: string,
       args: any[],
-      callerAddress?: string,
+      callerAddress: string,
     ) => {
-      const signer = callerAddress
-        ? await this._provider.getSigner(callerAddress)
-        : await this.getDefaultSigner()
+      const signer = await this._provider.getSigner(callerAddress)
       const tx: ContractTransactionResponse = await contract
         .connect(signer)
         [method](...args)
@@ -233,11 +234,9 @@ export namespace EthereumService {
     callRaw = async (
       contractAddress: string,
       encodedCallData: string,
-      callerAddress?: string,
+      callerAddress: string,
     ) => {
-      const signer = callerAddress
-        ? await this._provider.getSigner(callerAddress)
-        : await this.getDefaultSigner()
+      const signer = await this._provider.getSigner(callerAddress)
       const txCount = await this._provider.getTransactionCount(signer.address)
       const tt = await signer.estimateGas({
         data: encodedCallData,
@@ -257,6 +256,10 @@ export namespace EthereumService {
 
     getContract = async (address: string): Promise<ethers.Contract> => {
       return new ethers.Contract(address, [], this._provider)
+    }
+
+    getSigner = async (address: string): Promise<ethers.JsonRpcSigner> => {
+      return this._provider.getSigner(address)
     }
   }
 

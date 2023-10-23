@@ -230,6 +230,7 @@ export namespace ProjectRouter {
   interface DeployRequestBody {
     nodeName: string
     projectId: number
+    deployerAddress: string
   }
 
   interface DeployResponseBody extends Node {
@@ -241,7 +242,7 @@ export namespace ProjectRouter {
     req: Request<{}, any, DeployRequestBody, ParsedQs, Record<string, any>>,
     res: Response<DeployResponseBody | ErrorResponseBody>,
   ) {
-    const { projectId, nodeName } = req.body
+    const { projectId, nodeName, deployerAddress } = req.body
     const project = await prisma.project.findUnique({
       where: {
         id: Number(projectId),
@@ -274,7 +275,7 @@ export namespace ProjectRouter {
     const ethereumService = new EthereumService.Service(node.privateRpcUrl)
 
     try {
-      const signer = await ethereumService.getDefaultSigner()
+      const signer = await ethereumService.getSigner(deployerAddress)
       let context = {
         ADMIN: signer.address,
       }
@@ -294,6 +295,7 @@ export namespace ProjectRouter {
         const contract = await ethereumService.deploy({
           contractFactory: compileOutput[contractName].contractFactory,
           constructorArguments: deployCmd.constructor,
+          deployerAddress,
         })
         const address = await contract.getAddress()
         context[deployCmd.output] = address
@@ -310,7 +312,12 @@ export namespace ProjectRouter {
 
         if (deployCmd.functions) {
           for (const func of deployCmd.functions) {
-            await ethereumService.call(contract, func.name, func.arguments)
+            await ethereumService.call(
+              contract,
+              func.name,
+              func.arguments,
+              deployerAddress,
+            )
           }
         }
       }
