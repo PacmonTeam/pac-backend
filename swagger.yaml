@@ -284,6 +284,13 @@ paths:
       tags:
         - Plugins
       summary: List plugins
+      parameters:
+        - in: query
+          name: forceFetch
+          schema:
+            type: boolean
+          required: false
+          description: Force fetch plugins from github not redis
       responses:
         "200":
           description: Successful
