@@ -39,6 +39,7 @@ export namespace ProjectRouter {
     templates: {
       script: string
       displayName: string
+      type: string | undefined
       configuration: string
       sequence: number
       status: $Enums.Status
@@ -65,6 +66,7 @@ export namespace ProjectRouter {
             script: template.script,
             sequence: template.sequence,
             status: template.status,
+            type: template.type,
             projectId: project.id,
           },
         }),
@@ -85,6 +87,7 @@ export namespace ProjectRouter {
       script: string
       displayName: string
       configuration: string
+      type: string | undefined
       sequence: number
       status: $Enums.Status
     }[]
@@ -121,12 +124,14 @@ export namespace ProjectRouter {
             script: template.script,
             sequence: template.sequence,
             status: template.status,
+            type: template.type,
             projectId: project.id,
           },
           update: {
             configuration: template.configuration,
             script: template.script,
             sequence: template.sequence,
+            type: template.type,
             status: template.status,
           },
         }),
