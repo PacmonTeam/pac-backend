@@ -26,6 +26,7 @@ model Project {
 model Template {
   id            Int    @id @default(autoincrement())
   script        String
+  displayName   String @default("Untitled")
   configuration String
   sequence      Int
   status        Status @default(ACTIVE)

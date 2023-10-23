@@ -8,7 +8,7 @@ export namespace Command {
   }
 
   export type DeployContract = {
-    name: string
+    contractName: string
     constructor: any[]
     functions?: DeployContractFunction[]
     output: string

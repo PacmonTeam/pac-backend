@@ -396,6 +396,9 @@ components:
         script:
           type: string
           examples: ["// SOLIDITY CODE"]
+        displayName:
+          type: string
+          examples: [tPAC, tUSDC, tPAPAYA]
         configuration:
           type: string
           examples: ["// YAML CONFIG"]

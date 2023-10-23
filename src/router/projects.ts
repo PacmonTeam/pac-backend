@@ -14,6 +14,7 @@ const prisma = getPrisma()
 
 interface MinimalTemplate {
   id: number
+  displayName: string
   sequence: number
   status: $Enums.Status
 }
@@ -28,6 +29,7 @@ export namespace ProjectRouter {
   function mapMinimalTemplate(t: Template): MinimalTemplate {
     return {
       id: t.id,
+      displayName: t.displayName,
       sequence: t.sequence,
       status: t.status,
     }
@@ -36,6 +38,7 @@ export namespace ProjectRouter {
     name: string
     templates: {
       script: string
+      displayName: string
       configuration: string
       sequence: number
       status: $Enums.Status
@@ -80,6 +83,7 @@ export namespace ProjectRouter {
     name: string
     templates: {
       script: string
+      displayName: string
       configuration: string
       sequence: number
       status: $Enums.Status
@@ -290,7 +294,7 @@ export namespace ProjectRouter {
           configuration,
           context,
         )
-        const contractName = deployCmd.name
+        const contractName = deployCmd.contractName
         const compileOutput = await ethereumService.compile({
           [contractName]: script,
         })
@@ -307,7 +311,7 @@ export namespace ProjectRouter {
             configuration,
             script,
             sequence: template.sequence,
-            name: contractName,
+            name: template.displayName,
             nodeId: node.id,
           },
         })
