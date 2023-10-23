@@ -9,3 +9,5 @@ export const GITHUB_ACCESS_TOKEN = process.env.GITHUB_ACCESS_TOKEN || ''
 export const GITHUB_PLUGIN_OWNER = process.env.GITHUB_PLUGIN_OWNER || ''
 export const GITHUB_PLUGIN_REPO = process.env.GITHUB_PLUGIN_REPO || ''
 export const GITHUB_PLUGIN_PATH = process.env.GITHUB_PLUGIN_PATH || ''
+
+export const REDIS_URL = process.env.REDIS_URL || ''
