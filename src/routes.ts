@@ -1,6 +1,7 @@
 import express from 'express'
 
 import { NodeRouter } from './router/nodes'
+import { PluginRouter } from './router/plugins'
 import { ProjectRouter } from './router/projects'
 
 const router = express.Router()
@@ -25,5 +26,7 @@ router.get('/nodes', errorWrapper(NodeRouter.list))
 router.post('/nodes/reset', errorWrapper(NodeRouter.reset))
 router.post('/nodes/delete', errorWrapper(NodeRouter.deleteNode))
 router.post('/nodes/call', errorWrapper(NodeRouter.call))
+
+router.get('/plugins/list', errorWrapper(PluginRouter.list))
 
 export default router

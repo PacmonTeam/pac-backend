@@ -30,6 +30,7 @@
     "handlebars": "^4.7.8",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
+    "octokit": "^3.1.1",
     "pg": "^8.11.3",
     "solc": "0.8.20",
     "swagger-ui-express": "^5.0.0",

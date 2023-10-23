@@ -10,6 +10,8 @@ tags:
     description: Solidity source code and configuration files for each step are provided to enable our automation engine to deploy them to the test node
   - name: Node
     description: Deployed projects are deployed to a test node. The test node is a blockchain node that is used to test the deployed contracts
+  - name: Plugins
+    description: Plugins listed from the plugin repository
 paths:
   /projects:
     get:
@@ -277,6 +279,20 @@ paths:
                     type: integer
                     format: int64
                     examples: [1, 2, 3, 4]
+  /plugins/list:
+    get:
+      tags:
+        - Plugins
+      summary: List plugins
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Plugin"
 
 components:
   schemas:
@@ -543,3 +559,27 @@ components:
             [
               "0x1234567890123456789012345678901234567890123456789012345678901234567890",
             ]
+    Plugin:
+      type: object
+      properties:
+        defaultDisplayName:
+          type: string
+          examples: ["ERC20 #1"]
+        name:
+          type: string
+          examples: [Pacmon ERC20]
+        description:
+          type: string
+          examples: [Pacmon to the moon]
+        owner:
+          type: string
+          examples: [PACMON]
+        url:
+          type: string
+          examples: [https://pacmon.suijin.xyz/]
+        sampleScript:
+          type: string
+          examples: ["// SOLIDITY CODE"]
+        sampleConfiguration:
+          type: string
+          examples: ["// YAML CONFIG"]
