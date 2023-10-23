@@ -202,6 +202,8 @@ export namespace ProjectRouter {
         id: project.id,
         name: project.name,
         templates: _.map(project.templates, mapMinimalTemplate),
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
       })),
     )
   }
