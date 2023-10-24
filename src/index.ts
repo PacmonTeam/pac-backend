@@ -6,6 +6,7 @@ import swaggerUi from 'swagger-ui-express'
 import YAML from 'yaml'
 
 import { APP_PORT } from './env'
+import './lib/utils'
 import routers from './routes'
 
 const file = fs.readFileSync('./swagger.yaml', 'utf8')

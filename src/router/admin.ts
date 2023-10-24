@@ -12,6 +12,19 @@ import { ErrorResponseBody, readCommand } from './utils'
 
 const prisma = getPrisma()
 
+const SEED_CONFIG = {
+  configBTC:
+    '"contractName: \\"PacERC20\\"\\nconstructor:\\n  - \\"Test BTC Token\\"\\n  - \\"tPTC\\"\\n  - 18\\nfunctions:\\n  - name: mint\\n    arguments:\\n      - \\"{{ADMIN}}\\"\\n      - 100000000000000000000000\\nmanage:\\n  functions:\\n    - name: mint\\n      arguments:\\n        - address\\n        - uint256\\n    - name: transfer\\n      arguments:\\n        - address\\n        - uint256\\noutput: \\"BTC\\"\\n"',
+  configUSDC:
+    '"contractName: \\"PacERC20\\"\\nconstructor:\\n  - \\"Test USDC Token\\"\\n  - \\"tUSDC\\"\\n  - 6\\nfunctions:\\n  - name: mint\\n    arguments:\\n      - \\"{{ADMIN}}\\"\\n      - 1000000000000\\nmanage:\\n  functions:\\n    - name: mint\\n      arguments:\\n        - address\\n        - uint256\\n    - name: transfer\\n      arguments:\\n        - address\\n        - uint256\\noutput: \\"USDC\\"\\n"',
+  configUniV2:
+    '"contractName: \\"PacUniswapV2Pair\\"\\nconstructor:\\nfunctions:\\n  - name: initialize\\n    arguments:\\n      - \\"{{BTC}}\\"\\n      - \\"{{USDC}}\\"\\n  - name: setTokenAmounts\\n    arguments:\\n      - 1000000000000000000000\\n      - 35000000000000\\nmanage:\\n  functions:\\n    - name: setTokenAmounts\\n      arguments:\\n        - uint256\\n        - uint256\\noutput: \\"PAIR_BTC_USDC\\"\\n"',
+  configPriceFeedBTC:
+    '"contractName: \\"PacPriceFeed\\"\\nconstructor:\\n  - BTC/USD\\n  - 8\\nfunctions:\\n  - name: setLatestAnswer\\n    arguments:\\n      - 3500000000000 # 34000 USD\\nmanage:\\n  functions:\\n    - name: setLatestAnswer\\n      arguments:\\n        - uint256\\noutput: \\"PRICEFEED_BTC\\"\\n"',
+  configPriceFeedUSDC:
+    '"contractName: \\"PacPriceFeed\\"\\nconstructor:\\n  - USDC/USD\\n  - 8\\nfunctions:\\n  - name: setLatestAnswer\\n    arguments:\\n      - 100000000 # 1 USD\\nmanage:\\n  functions:\\n    - name: setLatestAnswer\\n      arguments:\\n        - uint256\\noutput: \\"PRICEFEED_USDC\\"\\n"',
+}
+
 export namespace AdminRouter {
   interface SeedResponseBody {
     success: boolean
@@ -30,15 +43,11 @@ export namespace AdminRouter {
     const erc20Plugin = plugins.find((p) => p.name === 'ERC-20 Token')
     const univ2Plugin = plugins.find((p) => p.name === 'Uniswap V2 Pair')
     const pricefeedPlugin = plugins.find((p) => p.name === 'Price Feed')
-    const configBTC = readCommand('seed-0-btc.yaml')
-    const configUSDC = readCommand('seed-1-usdc.yaml')
-    const configUniV2 = readCommand('seed-2-univ2.yaml')
-    const configPriceFeedBTC = readCommand('seed-3-pricefeed-btc.yaml')
-    const configPriceFeedUSDC = readCommand('seed-4-pricefeed-usdc.yaml')
+
     const templates = [
       {
         displayName: 'BTC',
-        configuration: configBTC,
+        configuration: JSON.parse(SEED_CONFIG.configBTC),
         script: erc20Plugin?.sampleScript || '',
         sequence: 0,
         status: $Enums.Status.ACTIVE,
@@ -46,7 +55,7 @@ export namespace AdminRouter {
       },
       {
         displayName: 'USDC',
-        configuration: configUSDC,
+        configuration: JSON.parse(SEED_CONFIG.configUSDC),
         script: erc20Plugin?.sampleScript || '',
         sequence: 1,
         status: $Enums.Status.ACTIVE,
@@ -54,7 +63,7 @@ export namespace AdminRouter {
       },
       {
         displayName: 'UNI-V2',
-        configuration: configUniV2,
+        configuration: JSON.parse(SEED_CONFIG.configUniV2),
         script: univ2Plugin?.sampleScript || '',
         sequence: 2,
         status: $Enums.Status.ACTIVE,
@@ -62,7 +71,7 @@ export namespace AdminRouter {
       },
       {
         displayName: 'Price Feed BTC',
-        configuration: configPriceFeedBTC,
+        configuration: JSON.parse(SEED_CONFIG.configPriceFeedBTC),
         script: pricefeedPlugin?.sampleScript || '',
         sequence: 3,
         status: $Enums.Status.ACTIVE,
@@ -70,7 +79,7 @@ export namespace AdminRouter {
       },
       {
         displayName: 'Price Feed USDC',
-        configuration: configPriceFeedUSDC,
+        configuration: JSON.parse(SEED_CONFIG.configPriceFeedUSDC),
         script: pricefeedPlugin?.sampleScript || '',
         sequence: 4,
         status: $Enums.Status.ACTIVE,
