@@ -20,7 +20,7 @@ const main = async () => {
   )
 
   const tpacDeployCommands = readFileSync(
-    path.resolve(__dirname, './assets/commands/tpac-deployment.yaml'),
+    path.resolve(__dirname, './tpac-deployment.yaml'),
     'utf8',
   )
   const code1 = JSON.stringify(code)

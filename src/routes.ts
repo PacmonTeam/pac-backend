@@ -1,5 +1,6 @@
 import express from 'express'
 
+import { AdminRouter } from './router/admin'
 import { NodeRouter } from './router/nodes'
 import { PluginRouter } from './router/plugins'
 import { ProjectRouter } from './router/projects'
@@ -28,5 +29,7 @@ router.post('/nodes/delete', errorWrapper(NodeRouter.deleteNode))
 router.post('/nodes/call', errorWrapper(NodeRouter.call))
 
 router.get('/plugins/list', errorWrapper(PluginRouter.list))
+
+router.post('/admin/seed', errorWrapper(AdminRouter.seed))
 
 export default router

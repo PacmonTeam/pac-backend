@@ -12,6 +12,8 @@ tags:
     description: Deployed projects are deployed to a test node. The test node is a blockchain node that is used to test the deployed contracts
   - name: Plugins
     description: Plugins listed from the plugin repository
+  - name: Admin
+    description: Admin operations
 paths:
   /projects:
     get:
@@ -19,14 +21,14 @@ paths:
         - Project & Template
       summary: Get all projects
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ProjectMinimal'
+                  $ref: "#/components/schemas/ProjectMinimal"
   /projects/{projectId}:
     get:
       tags:
@@ -40,12 +42,12 @@ paths:
           required: true
           description: Numeric ID of the project
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
+                $ref: "#/components/schemas/Project"
   /projects/create:
     post:
       tags:
@@ -57,14 +59,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProjectCreateBody'
+              $ref: "#/components/schemas/ProjectCreateBody"
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
+                $ref: "#/components/schemas/Project"
   /projects/update:
     post:
       tags:
@@ -76,14 +78,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProjectUpdateBody'
+              $ref: "#/components/schemas/ProjectUpdateBody"
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
+                $ref: "#/components/schemas/Project"
   /projects/delete:
     post:
       tags:
@@ -101,7 +103,7 @@ paths:
                   format: int64
                   examples: [1, 2, 3, 4]
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
@@ -132,28 +134,28 @@ paths:
                   examples: [UAT, PVT]
                 deployerAddress:
                   type: string
-                  examples: ['0x1234567890']
+                  examples: ["0x1234567890"]
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Project'
+                $ref: "#/components/schemas/Project"
   /nodes:
     get:
       tags:
         - Node
       summary: Get all nodes
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/NodeMinimal'
+                  $ref: "#/components/schemas/NodeMinimal"
   /nodes/{nodeId}:
     get:
       tags:
@@ -167,12 +169,12 @@ paths:
           required: true
           description: Numeric ID of the node
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Node'
+                $ref: "#/components/schemas/Node"
   /nodes/reset:
     post:
       tags:
@@ -190,7 +192,7 @@ paths:
                   format: int64
                   examples: [1, 2, 3, 4]
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
@@ -203,7 +205,7 @@ paths:
                   updatedAt:
                     type: string
                     format: date-time
-                    examples: ['2021-01-01T00:00:00.000Z']
+                    examples: ["2021-01-01T00:00:00.000Z"]
   /nodes/delete:
     post:
       tags:
@@ -221,7 +223,7 @@ paths:
                   format: int64
                   examples: [1, 2, 3, 4]
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
@@ -253,16 +255,16 @@ paths:
                   examples: [1, 2, 3, 4]
                 contractAddress:
                   type: string
-                  examples: ['0x1234567890']
+                  examples: ["0x1234567890"]
                 encodedData:
                   type: string
                   examples:
-                    ['0x1234567890 // Generate by calling encodeFunctionData']
+                    ["0x1234567890 // Generate by calling encodeFunctionData"]
                 callerAddress:
                   type: string
-                  examples: ['0x1234567890']
+                  examples: ["0x1234567890"]
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
@@ -271,10 +273,10 @@ paths:
                 properties:
                   txHash:
                     type: string
-                    examples: ['0x1234567890']
+                    examples: ["0x1234567890"]
                   blockHash:
                     type: string
-                    examples: ['0x1234567890']
+                    examples: ["0x1234567890"]
                   blockNumber:
                     type: integer
                     format: int64
@@ -292,14 +294,30 @@ paths:
           required: false
           description: Force fetch plugins from github not redis
       responses:
-        '200':
+        "200":
           description: Successful
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Plugin'
+                  $ref: "#/components/schemas/Plugin"
+  /admin/seed:
+    post:
+      tags:
+        - Admin
+      summary: Seed a sample project & sample node
+      responses:
+        "200":
+          description: Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    examples: [true]
 
 components:
   schemas:
@@ -312,7 +330,7 @@ components:
         templates:
           type: array
           items:
-            $ref: '#/components/schemas/TemplateBody'
+            $ref: "#/components/schemas/TemplateBody"
       required:
         - name
         - templates
@@ -329,7 +347,7 @@ components:
         templates:
           type: array
           items:
-            $ref: '#/components/schemas/TemplateBody'
+            $ref: "#/components/schemas/TemplateBody"
       required:
         - id
         - name
@@ -347,15 +365,15 @@ components:
         templates:
           type: array
           items:
-            $ref: '#/components/schemas/Template'
+            $ref: "#/components/schemas/Template"
         createdAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         updatedAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
     ProjectMinimal:
       type: object
       properties:
@@ -369,15 +387,15 @@ components:
         templates:
           type: array
           items:
-            $ref: '#/components/schemas/TemplateMinimal'
+            $ref: "#/components/schemas/TemplateMinimal"
         createdAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         updatedAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
     Template:
       type: object
       properties:
@@ -387,10 +405,10 @@ components:
           examples: [1, 2, 3, 4]
         script:
           type: string
-          examples: ['// SOLIDITY CODE']
+          examples: ["// SOLIDITY CODE"]
         configuration:
           type: string
-          examples: ['// YAML CONFIG']
+          examples: ["// YAML CONFIG"]
         sequence:
           type: integer
         status:
@@ -400,10 +418,10 @@ components:
         address:
           type: string
           nullable: true
-          examples: ['0x1234567890']
+          examples: ["0x1234567890"]
         type:
           type: string
-          exmaples: ['erc-20', 'pricefeed', 'custom']
+          exmaples: ["erc-20", "pricefeed", "custom"]
         projectId:
           type: integer
           format: int64
@@ -411,23 +429,23 @@ components:
         createdAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         updatedAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
     TemplateBody:
       type: object
       properties:
         script:
           type: string
-          examples: ['// SOLIDITY CODE']
+          examples: ["// SOLIDITY CODE"]
         displayName:
           type: string
           examples: [tPAC, tUSDC, tPAPAYA]
         configuration:
           type: string
-          examples: ['// YAML CONFIG']
+          examples: ["// YAML CONFIG"]
         sequence:
           type: integer
         status:
@@ -435,15 +453,15 @@ components:
           enum: [ACTIVE, INACTIVE]
         type:
           type: string
-          exmaples: ['erc-20', 'pricefeed', 'custom']
+          exmaples: ["erc-20", "pricefeed", "custom"]
         createdAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         updatedAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
       required:
         - script
         - configuration
@@ -464,22 +482,22 @@ components:
         address:
           type: string
           nullable: true
-          examples: ['0x1234567890']
+          examples: ["0x1234567890"]
         projectId:
           type: integer
           format: int64
           examples: [1, 2, 3, 4]
         type:
           type: string
-          exmaples: ['erc-20', 'pricefeed', 'custom']
+          exmaples: ["erc-20", "pricefeed", "custom"]
         createdAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         updatedAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
     Node:
       type: object
       properties:
@@ -492,25 +510,25 @@ components:
           examples: [Pacmon, Pragma, Papaya]
         rpc:
           type: string
-          examples: ['http://localhost:8545']
+          examples: ["http://localhost:8545"]
         project:
-          $ref: '#/components/schemas/Project'
+          $ref: "#/components/schemas/Project"
         contracts:
           type: array
           items:
-            $ref: '#/components/schemas/NodeContract'
+            $ref: "#/components/schemas/NodeContract"
         createdAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         updatedAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         signers:
           type: array
           items:
-            $ref: '#/components/schemas/NodeSigner'
+            $ref: "#/components/schemas/NodeSigner"
     NodeMinimal:
       type: object
       properties:
@@ -523,17 +541,17 @@ components:
           examples: [Pacmon, Pragma, Papaya]
         rpc:
           type: string
-          examples: ['http://localhost:8545']
+          examples: ["http://localhost:8545"]
         project:
-          $ref: '#/components/schemas/Project'
+          $ref: "#/components/schemas/Project"
         createdAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         updatedAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
     NodeContract:
       type: object
       properties:
@@ -543,44 +561,44 @@ components:
           examples: [1, 2, 3, 4]
         address:
           type: string
-          examples: ['0x1234567890']
+          examples: ["0x1234567890"]
         name:
           type: string
           examples: [PacmonERC20, PragmaERC69, PapayaERC420]
         script:
           type: string
-          examples: ['// SOLIDITY CODE']
+          examples: ["// SOLIDITY CODE"]
         configuration:
           type: string
-          examples: ['// YAML CONFIG']
+          examples: ["// YAML CONFIG"]
         sequence:
           type: integer
         createdAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
         updatedAt:
           type: string
           format: date-time
-          examples: ['2021-01-01T00:00:00.000Z']
+          examples: ["2021-01-01T00:00:00.000Z"]
     NodeSigner:
       type: object
       properties:
         address:
           type: string
-          examples: ['0x1234567890']
+          examples: ["0x1234567890"]
         privateKey:
           type: string
           examples:
             [
-              '0x1234567890123456789012345678901234567890123456789012345678901234567890',
+              "0x1234567890123456789012345678901234567890123456789012345678901234567890",
             ]
     Plugin:
       type: object
       properties:
         defaultDisplayName:
           type: string
-          examples: ['ERC20 #1']
+          examples: ["ERC20 #1"]
         name:
           type: string
           examples: [Pacmon ERC20]
@@ -595,7 +613,7 @@ components:
           examples: [https://pacmon.suijin.xyz/]
         sampleScript:
           type: string
-          examples: ['// SOLIDITY CODE']
+          examples: ["// SOLIDITY CODE"]
         sampleConfiguration:
           type: string
-          examples: ['// YAML CONFIG']
+          examples: ["// YAML CONFIG"]

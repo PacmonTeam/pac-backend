@@ -199,8 +199,8 @@ export namespace NodeRouter {
 
     res.json({
       txHash: txReceipt.hash,
-      blockHash: txReceipt.blockHash,
-      blockNumber: txReceipt.blockNumber,
+      blockHash: txReceipt.blockHash as string,
+      blockNumber: txReceipt.blockNumber as number,
     })
   }
 }
