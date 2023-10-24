@@ -1,0 +1,14 @@
+contractName: "PacPriceFeed"
+constructor:
+  - USDC/USD
+  - 8
+functions:
+  - name: setLatestAnswer
+    arguments:
+      - 100000000 # 1 USD
+manage:
+  functions:
+    - name: setLatestAnswer
+      arguments:
+        - uint256
+output: "PRICEFEED_USDC"

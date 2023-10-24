@@ -12,20 +12,20 @@ import { ErrorResponseBody } from './utils'
 
 const prisma = getPrisma()
 
-interface MinimalTemplate {
-  id: number
-  displayName: string
-  sequence: number
-  status: $Enums.Status
-}
-
-interface MinimalProject {
-  id: number
-  name: string
-  templates: MinimalTemplate[]
-}
-
 export namespace ProjectRouter {
+  export interface MinimalTemplate {
+    id: number
+    displayName: string
+    sequence: number
+    status: $Enums.Status
+  }
+
+  export interface MinimalProject {
+    id: number
+    name: string
+    templates: MinimalTemplate[]
+  }
+
   function mapMinimalTemplate(t: Template): MinimalTemplate {
     return {
       id: t.id,
@@ -34,7 +34,7 @@ export namespace ProjectRouter {
       status: t.status,
     }
   }
-  interface CreateRequestBody {
+  export interface CreateRequestBody {
     name: string
     templates: {
       script: string
@@ -62,6 +62,7 @@ export namespace ProjectRouter {
       _.map(templates, (template) =>
         prisma.template.create({
           data: {
+            displayName: template.displayName,
             configuration: template.configuration,
             script: template.script,
             sequence: template.sequence,
@@ -80,7 +81,7 @@ export namespace ProjectRouter {
     })
   }
 
-  interface UpdateRequestBody {
+  export interface UpdateRequestBody {
     id: number
     name: string
     templates: {
@@ -120,6 +121,7 @@ export namespace ProjectRouter {
             },
           },
           create: {
+            displayName: template.displayName,
             configuration: template.configuration,
             script: template.script,
             sequence: template.sequence,
@@ -128,6 +130,7 @@ export namespace ProjectRouter {
             projectId: project.id,
           },
           update: {
+            displayName: template.displayName,
             configuration: template.configuration,
             script: template.script,
             sequence: template.sequence,
@@ -154,10 +157,10 @@ export namespace ProjectRouter {
     })
   }
 
-  interface GetRequestParams {
+  export interface GetRequestParams {
     projectId: number
   }
-  interface GetResponseBody extends Project {
+  export interface GetResponseBody extends Project {
     templates: Template[]
   }
 
@@ -217,10 +220,10 @@ export namespace ProjectRouter {
     )
   }
 
-  interface DeleteRequestBody {
+  export interface DeleteRequestBody {
     projectId: number
   }
-  interface DeleteResponseBody {
+  export interface DeleteResponseBody {
     success: boolean
   }
   export async function deleteProject(
@@ -238,13 +241,13 @@ export namespace ProjectRouter {
     })
   }
 
-  interface DeployRequestBody {
+  export interface DeployRequestBody {
     nodeName: string
     projectId: number
     deployerAddress: string
   }
 
-  interface DeployResponseBody extends Node {
+  export interface DeployResponseBody extends Node {
     project: Project
     contracts: NodeContract[]
   }
@@ -299,15 +302,17 @@ export namespace ProjectRouter {
           configuration,
           context,
         )
+        console.log('🚀 turbo ~ file: projects.ts:305 ~ deployCmd:', deployCmd)
         const contractName = deployCmd.contractName
         const compileOutput = await ethereumService.compile({
           [contractName]: script,
         })
         const contract = await ethereumService.deploy({
           contractFactory: compileOutput[contractName].contractFactory,
-          constructorArguments: deployCmd.constructor,
+          constructorArguments: deployCmd.constructor || [],
           deployerAddress,
         })
+        console.log('contract deployed', contract.address, contractName)
         const address = await contract.getAddress()
         context[deployCmd.output] = address
         await prisma.nodeContract.create({

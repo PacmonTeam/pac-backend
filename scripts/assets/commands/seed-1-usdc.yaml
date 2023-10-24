@@ -1,0 +1,21 @@
+contractName: "PacERC20"
+constructor:
+  - "Test USDC Token"
+  - "tUSDC"
+  - 6
+functions:
+  - name: mint
+    arguments:
+      - "{{ADMIN}}"
+      - 1000000000000
+manage:
+  functions:
+    - name: mint
+      arguments:
+        - address
+        - uint256
+    - name: transfer
+      arguments:
+        - address
+        - uint256
+output: "USDC"
