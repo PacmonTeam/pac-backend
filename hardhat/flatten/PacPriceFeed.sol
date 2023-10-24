@@ -50,8 +50,8 @@ contract PacPriceFeed is AggregatorV3Interface {
     int256 public answer;
     uint80 public roundId;
 
-    uint8 public constant override decimals = 8;
-    string public constant override description = 'PriceFeed';
+    uint8 public immutable override decimals;
+    string public override description = 'PriceFeed';
     uint256 public constant override version = 1;
 
     address public gov;
@@ -59,9 +59,11 @@ contract PacPriceFeed is AggregatorV3Interface {
     mapping(uint80 => int256) public answers;
     mapping(address => bool) public isAdmin;
 
-    constructor() {
+    constructor(string memory _description, uint8 _decimals) {
         gov = msg.sender;
         isAdmin[msg.sender] = true;
+        description = _description;
+        decimals = _decimals;
     }
 
     function setAdmin(address _account, bool _isAdmin) public {
