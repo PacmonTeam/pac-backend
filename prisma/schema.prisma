@@ -27,6 +27,7 @@ model Template {
   id            Int    @id @default(autoincrement())
   script        String
   displayName   String @default("Untitled")
+  type          String @default("custom")
   configuration String
   sequence      Int
   status        Status @default(ACTIVE)
