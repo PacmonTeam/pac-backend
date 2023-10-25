@@ -7,6 +7,7 @@ import { Command, parseCommand } from '@/lib/commandParser'
 import { EthereumService } from '@/lib/ethereum'
 import { GitHubService } from '@/lib/github'
 import { getPrisma } from '@/lib/prisma'
+import { redis } from '@/lib/redis'
 
 import { ErrorResponseBody, readCommand } from './utils'
 
@@ -40,6 +41,9 @@ export namespace AdminRouter {
       .map((plugin) => plugin)
       .sortBy('info.name')
       .value()
+    await redis.setPlugins(plugins, {
+      EX: 60 * 60 * 24,
+    })
     const erc20Plugin = plugins.find((p) => p.name === 'ERC-20 Token')
     const univ2Plugin = plugins.find((p) => p.name === 'Uniswap V2 Pair')
     const pricefeedPlugin = plugins.find((p) => p.name === 'Price Feed')
