@@ -32,4 +32,8 @@ router.get('/plugins/list', errorWrapper(PluginRouter.list))
 
 router.post('/admin/seed', errorWrapper(AdminRouter.seed))
 
+router.get('/', (req, res) => {
+  res.send({ ok: true })
+})
+
 export default router
