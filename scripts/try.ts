@@ -5,7 +5,7 @@ import { PRIVATE_RPC_URL } from '@/env'
 import { EthereumService } from '@/lib/ethereum'
 
 const main = async () => {
-  const resp = await axios.get('https://pacmon.suijin.xyz/api/projects/17')
+  const resp = await axios.get('https://o.pacmon.suijin.xyz/api/projects/17')
   console.log('🚀 turbo ~ file: example.ts:8 ~ resp:', resp.data)
   const project = resp.data
   const t = project.templates[0]
