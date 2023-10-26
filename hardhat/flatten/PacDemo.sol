@@ -249,18 +249,15 @@ contract PacDemo {
         uint256 decimals0 = IERC20(token0).decimals();
         price =
             (uint256(price0) * PRICE_PRECISION) /
-            decimals0 /
-            AggregatorV3Interface(pricefeed0).decimals();
+            (10 ** AggregatorV3Interface(pricefeed0).decimals());
     }
 
     function getPrice1() public view returns (uint256 price) {
         (, int256 price1, , , ) = AggregatorV3Interface(pricefeed1)
             .latestRoundData();
-        uint256 decimals1 = IERC20(token1).decimals();
         price =
             (uint256(price1) * PRICE_PRECISION) /
-            decimals1 /
-            AggregatorV3Interface(pricefeed1).decimals();
+            (10 ** AggregatorV3Interface(pricefeed1).decimals());
     }
 
     function getPrices() public view returns (uint256 price0, uint256 price1) {
@@ -277,13 +274,13 @@ contract PacDemo {
         uint256 decimals1 = IERC20(token1).decimals();
         (uint256 reserve0, uint256 reserve1) = getReserves();
         ammPrice0 =
-            (reserve1 * PRICE_PRECISION * decimals0) /
+            (reserve1 * PRICE_PRECISION * (10 ** decimals0)) /
             reserve0 /
-            decimals1;
+            (10 ** decimals1);
         ammPrice1 =
-            (reserve0 * PRICE_PRECISION * decimals1) /
+            (reserve0 * PRICE_PRECISION * (10 ** decimals1)) /
             reserve1 /
-            decimals0;
+            (10 ** decimals0);
     }
 
     function getValue0(address account) public view returns (uint256 value) {
@@ -296,8 +293,7 @@ contract PacDemo {
 
         value =
             (balance0 * uint256(price0) * PRICE_PRECISION) /
-            decimals0 /
-            AggregatorV3Interface(pricefeed0).decimals();
+            (10 ** (decimals0 + AggregatorV3Interface(pricefeed0).decimals()));
     }
 
     function getValue1(address account) public view returns (uint256 value) {
@@ -310,8 +306,7 @@ contract PacDemo {
 
         value =
             (balance1 * uint256(price1) * PRICE_PRECISION) /
-            decimals1 /
-            AggregatorV3Interface(pricefeed1).decimals();
+            (10 ** (decimals1 + AggregatorV3Interface(pricefeed1).decimals()));
     }
 
     function getValues(
