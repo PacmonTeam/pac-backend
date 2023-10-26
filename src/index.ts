@@ -21,7 +21,7 @@ app.use(express.static('public'))
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(routers)
 app.use(function (error, request, response, next) {
-  console.error('error', error.message)
+  console.error('error', error)
   response.status(500).send({
     error: error.message,
   })

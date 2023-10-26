@@ -302,7 +302,7 @@ export namespace ProjectRouter {
           configuration,
           context,
         )
-        console.log('🚀 turbo ~ file: projects.ts:305 ~ deployCmd:', deployCmd)
+        console.log('deployCmd:', deployCmd)
         const contractName = deployCmd.contractName
         const compileOutput = await ethereumService.compile({
           [contractName]: script,
@@ -312,8 +312,8 @@ export namespace ProjectRouter {
           constructorArguments: deployCmd.constructor || [],
           deployerAddress,
         })
-        console.log('contract deployed', contract.address, contractName)
         const address = await contract.getAddress()
+        console.log('contract deployed', address, contractName)
         context[deployCmd.output] = address
         await prisma.nodeContract.create({
           data: {

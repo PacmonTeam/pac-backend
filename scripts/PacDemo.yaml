@@ -1,0 +1,18 @@
+contractName: "PacDemo"
+constructor:
+  - "{{BTC}}"
+  - "{{USDC}}"
+  - "{{PAIR_BTC_USDC}}"
+  - "{{PRICEFEED_BTC}}"
+  - "{{PRICEFEED_USDC}}"
+manage:
+  functions:
+    - name: setDepositEnabled
+      arguments:
+        - name: enabled
+          type: boolean
+    - name: setWithdrawEnabled
+      arguments:
+        - name: enabled
+          type: boolean
+output: "DEMO_BANK"
