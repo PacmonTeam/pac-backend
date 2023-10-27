@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  backend:
+    depends_on:
+      - redis
+    extends:
+      file: ./services/compose-backend.yml
+      service: backend
+    environment:
+        ETHEREUM_JSONRPC_VARIANT: 'ganache'
+
+  visualizer:
+    extends:
+      file: ./services/compose-visualizer.yml
+      service: visualizer
+
+  sig-provider:
+    extends:
+      file: ./services/compose-sig-provider.yml
+      service: sig-provider
+
+  frontend:
+    depends_on:
+      - backend
+    extends:
+      file: ./services/compose-frontend.yml
+      service: frontend
+
+  # stats-db-init:
+  #   extends:
+  #     file: ./services/docker-compose-stats.yml
+  #     service: stats-db-init
+
+  # stats-db:
+  #   depends_on:
+  #     - backend
+  #   extends:
+  #     file: ./services/docker-compose-stats.yml
+  #     service: stats-db
+
+  # stats:
+  #   depends_on:
+  #     - stats-db
+  #   extends:
+  #     file: ./services/docker-compose-stats.yml
+  #     service: stats
+
+  proxy:
+    depends_on:
+      - backend
+      - frontend
+    extends:
+      file: ./services/docker-compose-nginx.yml
+      service: proxy

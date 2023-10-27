@@ -59,6 +59,9 @@ services:
       - redis
     networks:
       - pacmonnet
+  blockscout:
+    extends:
+      file: ./blockscout/compose.yml
 volumes:
   postgresdata:
     driver: local
