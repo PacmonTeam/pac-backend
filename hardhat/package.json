@@ -15,6 +15,7 @@
     "@typechain/ethers-v6": "^0.5.1",
     "@typechain/hardhat": "^9.1.0",
     "chai": "^4.2.0",
+    "ts-node": "^10.9.1",
     "typechain": "^8.3.2",
     "typescript": "^5.2.2"
   }
