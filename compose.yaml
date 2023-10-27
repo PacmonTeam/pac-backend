@@ -63,6 +63,7 @@ services:
   blockscout-backend:
     depends_on:
       - redis
+      - db
     extends:
       file: ./blockscout/services/compose-backend.yml
       service: backend
