@@ -62,12 +62,12 @@ services:
 
   blockscout-db-init:
     extends:
-      file: ./services/docker-compose-db.yml
+      file: ./services/compose-db.yml
       service: db-init
 
   blockscout-db:
     extends:
-      file: ./services/docker-compose-db.yml
+      file: ./services/compose-db.yml
       service: db
 
   blockscout-backend:
