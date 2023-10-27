@@ -78,7 +78,7 @@ services:
       service: sig-provider
   blockscout-frontend:
     depends_on:
-      - backend
+      - blockscout-backend
     extends:
       file: ./blockscout/services/compose-frontend.yml
       service: frontend
