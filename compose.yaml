@@ -59,6 +59,40 @@ services:
       - redis
     networks:
       - pacmonnet
+
+  blockscout-db-init:
+    extends:
+      file: ./blockscout/services/compose-db.yml
+      service: db-init
+
+  blockscout-db:
+    extends:
+      file: ./blockscout/services/compose-db.yml
+      service: db
+
+  blockscout-backend:
+    depends_on:
+      - redis
+      - blockscout-db
+    extends:
+      file: ./blockscout/services/compose-backend.yml
+      service: backend
+    environment:
+        ETHEREUM_JSONRPC_VARIANT: 'ganache'
+  blockscout-visualizer:
+    extends:
+      file: ./blockscout/services/compose-visualizer.yml
+      service: visualizer
+  blockscout-sig-provider:
+    extends:
+      file: ./blockscout/services/compose-sig-provider.yml
+      service: sig-provider
+  blockscout-frontend:
+    depends_on:
+      - blockscout-backend
+    extends:
+      file: ./blockscout/services/compose-frontend.yml
+      service: frontend
 volumes:
   postgresdata:
     driver: local
