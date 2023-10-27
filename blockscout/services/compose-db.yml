@@ -13,7 +13,7 @@ services:
 
   db:
     depends_on:
-      db-init:
+      blockscout-db-init:
         condition: service_completed_successfully
     image: postgres:latest
     user: 2000:2000
