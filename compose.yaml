@@ -60,10 +60,20 @@ services:
     networks:
       - pacmonnet
 
+  blockscout-db-init:
+    extends:
+      file: ./services/docker-compose-db.yml
+      service: db-init
+
+  blockscout-db:
+    extends:
+      file: ./services/docker-compose-db.yml
+      service: db
+
   blockscout-backend:
     depends_on:
       - redis
-      - db
+      - blockscout-db
     extends:
       file: ./blockscout/services/compose-backend.yml
       service: backend
