@@ -12,15 +12,6 @@ services:
       - pacmonnet
     volumes:
       - postgresdata:/var/lib/postgresql/data
-  hardhat:
-    build: hardhat
-    ports:
-      - '8545:8545'
-    restart: always
-    networks:
-      - pacmonnet
-    volumes:
-      - postgresdata:/app/cache
   redis:
     image: 'bitnami/redis:latest'
     environment:
@@ -43,7 +34,7 @@ services:
       - POSTGRES_PW=${POSTGRES_PW}
       - POSTGRES_DB=postgres
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PW}@db:5432/${POSTGRES_DB}?schema=public
-      - PRIVATE_RPC_URL=http://hardhat:8545
+      - PRIVATE_RPC_URL=http://localhost:8545
       - PUBLIC_RPC_URL=${PUBLIC_RPC_URL}
       - REDIS_URL=redis://redis:6379
       - GITHUB_PLUGIN_OWNER=${GITHUB_PLUGIN_OWNER}
@@ -55,7 +46,6 @@ services:
     restart: always
     depends_on:
       - db
-      - hardhat
       - redis
     networks:
       - pacmonnet

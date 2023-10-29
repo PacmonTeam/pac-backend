@@ -1,0 +1,15 @@
+services:
+  otterscan:
+    image: otterscan/otterscan:latest
+    container_name: otterscan
+    # environment:
+    # - ERIGON_URL=http://localhost:8545
+    ports:
+      - '5100:80'
+    restart: always
+    networks:
+      - pacmonnet
+networks:
+  pacmonnet:
+    name: pacmonnet
+    external: true
