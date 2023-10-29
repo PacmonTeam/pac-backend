@@ -54,7 +54,6 @@ interface IUniswapV2ERC20 {
     ) external;
 }
 
-
 // File contracts/interfaces/IUniswapV2Pair.sol
 
 // Original license: SPDX_License_Identifier: MIT
@@ -114,7 +113,6 @@ interface IUniswapV2Pair is IUniswapV2ERC20 {
     function initialize(address, address) external;
 }
 
-
 // File contracts/interfaces/IERC20.sol
 
 // Original license: SPDX_License_Identifier: MIT
@@ -150,7 +148,6 @@ interface IERC20 {
         uint value
     ) external returns (bool);
 }
-
 
 // File contracts/interfaces/IPriceFeed.sol
 
@@ -189,14 +186,11 @@ interface AggregatorV3Interface {
         );
 }
 
-
 // File contracts/PacDemo.sol
 
 // Original license: SPDX_License_Identifier: MIT
 
-pragma solidity =0.8.20;
-
-
+pragma solidity =0.8.19;
 
 contract PacDemo {
     uint256 public constant PRICE_PRECISION = 10 ** 30;
