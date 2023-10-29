@@ -132,9 +132,6 @@ paths:
                 nodeName:
                   type: string
                   examples: [UAT, PVT]
-                deployerAddress:
-                  type: string
-                  examples: ["0x1234567890"]
       responses:
         "200":
           description: Successful
@@ -175,37 +172,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Node"
-  /nodes/reset:
-    post:
-      tags:
-        - Node
-      summary: Reset node to initial state
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                nodeId:
-                  type: integer
-                  format: int64
-                  examples: [1, 2, 3, 4]
-      responses:
-        "200":
-          description: Successful
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    examples: [true]
-                  updatedAt:
-                    type: string
-                    format: date-time
-                    examples: ["2021-01-01T00:00:00.000Z"]
   /nodes/delete:
     post:
       tags:
@@ -260,9 +226,6 @@ paths:
                   type: string
                   examples:
                     ["0x1234567890 // Generate by calling encodeFunctionData"]
-                callerAddress:
-                  type: string
-                  examples: ["0x1234567890"]
       responses:
         "200":
           description: Successful
