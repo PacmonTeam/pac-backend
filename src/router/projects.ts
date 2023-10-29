@@ -289,9 +289,9 @@ export namespace ProjectRouter {
     const ethereumService = new EthereumService.Service(node.privateRpcUrl)
 
     try {
-      const signer = await ethereumService.getSigner(deployerAddress)
+      const deployer = await ethereumService.getDefaultSigner()
       let context = {
-        ADMIN: signer.address,
+        ADMIN: deployer.address,
       }
       const templates = _.sortBy(project.templates, 'sequence')
       // TODO: batch transactions
@@ -310,7 +310,6 @@ export namespace ProjectRouter {
         const contract = await ethereumService.deploy({
           contractFactory: compileOutput[contractName].contractFactory,
           constructorArguments: deployCmd.constructor || [],
-          deployerAddress,
         })
         const address = await contract.getAddress()
         console.log('contract deployed', address, contractName)
@@ -328,12 +327,7 @@ export namespace ProjectRouter {
 
         if (deployCmd.functions) {
           for (const func of deployCmd.functions) {
-            await ethereumService.call(
-              contract,
-              func.name,
-              func.arguments,
-              deployerAddress,
-            )
+            await ethereumService.call(contract, func.name, func.arguments)
           }
         }
       }
