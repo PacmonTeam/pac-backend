@@ -2,8 +2,8 @@ services:
   otterscan:
     image: otterscan/otterscan:latest
     container_name: otterscan
-    # environment:
-    # - ERIGON_URL=http://localhost:8545
+    environment:
+      - ERIGON_URL=${PUBLIC_RPC_URL}
     ports:
       - '5100:80'
     restart: always
