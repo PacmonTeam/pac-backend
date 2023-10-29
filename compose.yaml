@@ -34,7 +34,7 @@ services:
       - POSTGRES_PW=${POSTGRES_PW}
       - POSTGRES_DB=postgres
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PW}@db:5432/${POSTGRES_DB}?schema=public
-      - PRIVATE_RPC_URL=http://localhost:8545
+      - PRIVATE_RPC_URL=http://host.docker.internal:8545
       - PUBLIC_RPC_URL=${PUBLIC_RPC_URL}
       - REDIS_URL=redis://redis:6379
       - GITHUB_PLUGIN_OWNER=${GITHUB_PLUGIN_OWNER}
@@ -49,6 +49,8 @@ services:
       - redis
     networks:
       - pacmonnet
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 volumes:
   postgresdata:
     driver: local
