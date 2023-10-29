@@ -1,9 +1,4 @@
-import {
-  Contract,
-  ContractTransactionResponse,
-  TransactionResponse,
-  ethers,
-} from 'ethers'
+import { Contract, ethers } from 'ethers'
 import _ from 'lodash'
 import solc from 'solc'
 
@@ -25,7 +20,6 @@ export namespace EthereumService {
   export interface IDeployContractInput {
     contractFactory: ethers.ContractFactory
     constructorArguments: ethers.ContractMethodArgs<any[]>
-    deployerAddress: string
   }
 
   export interface ICompileContractInput {
@@ -59,16 +53,13 @@ export namespace EthereumService {
     }
 
     getDefaultSigner = async () => {
-      const signer = await this._provider.getSigner(FIXED_WALLETS[0].address)
+      const wallet = new ethers.Wallet(FIXED_WALLETS[0].privateKey)
+      const signer = wallet.connect(this._provider)
       return signer
     }
 
-    reset = () => this._provider.send('hardhat_reset', [])
-
     deploy = async (contractInput: IDeployContractInput) => {
-      const signer = await this._provider.getSigner(
-        contractInput.deployerAddress,
-      )
+      const signer = await this.getDefaultSigner()
       const contractFactory = contractInput.contractFactory
       const tx = await contractFactory
         .connect(signer)
@@ -106,7 +97,9 @@ export namespace EthereumService {
           outputSelection: outputSelection,
         },
       }
-      const compiled = solc.compile(JSON.stringify(input))
+      const compiled = solc.compile(JSON.stringify(input), {
+        evmVersion: 'paris',
+      })
       const output = JSON.parse(compiled)
 
       const out = _.reduce(
@@ -127,26 +120,17 @@ export namespace EthereumService {
       return out
     }
 
-    call = async (
-      contract: ethers.Contract,
-      method: string,
-      args: any[],
-      callerAddress: string,
-    ) => {
-      const signer = await this._provider.getSigner(callerAddress)
-      const tx: ContractTransactionResponse = await contract
+    call = async (contract: ethers.Contract, method: string, args: any[]) => {
+      const signer = await this.getDefaultSigner()
+      const tx: ethers.ContractTransactionResponse = await contract
         .connect(signer)
         [method](...args)
       const receipt = await tx.wait()
       return receipt
     }
 
-    callRaw = async (
-      contractAddress: string,
-      encodedCallData: string,
-      callerAddress: string,
-    ) => {
-      const signer = await this._provider.getSigner(callerAddress)
+    callRaw = async (contractAddress: string, encodedCallData: string) => {
+      const signer = await this.getDefaultSigner()
       const txCount = await this._provider.getTransactionCount(signer.address)
       const tt = await signer.estimateGas({
         data: encodedCallData,
@@ -154,7 +138,7 @@ export namespace EthereumService {
         from: signer.address,
         nonce: txCount,
       })
-      const tx: TransactionResponse = await signer.sendTransaction({
+      const tx: ethers.TransactionResponse = await signer.sendTransaction({
         data: encodedCallData,
         to: contractAddress,
         from: signer.address,
@@ -166,10 +150,6 @@ export namespace EthereumService {
 
     getContract = async (address: string): Promise<ethers.Contract> => {
       return new ethers.Contract(address, [], this._provider)
-    }
-
-    getSigner = async (address: string): Promise<ethers.JsonRpcSigner> => {
-      return this._provider.getSigner(address)
     }
   }
 

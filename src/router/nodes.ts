@@ -121,7 +121,10 @@ export namespace NodeRouter {
       })
     }
     const ethereumService = new EthereumService.Service(node.privateRpcUrl)
-    await ethereumService.reset()
+    // await ethereumService.reset()
+    res.status(501).json({
+      message: 'Not implemented',
+    })
     const updatedNode = await prisma.node.update({
       where: {
         id: Number(nodeId),
@@ -163,7 +166,6 @@ export namespace NodeRouter {
     nodeId: number
     contractAddress: string
     encodedData: string
-    callerAddress: string
   }
   interface CallResponseBody {
     txHash: string
@@ -174,7 +176,7 @@ export namespace NodeRouter {
     req: Request<{}, any, CallRequestBody>,
     res: Response<CallResponseBody | ErrorResponseBody>,
   ) {
-    const { nodeId, contractAddress, encodedData, callerAddress } = req.body
+    const { nodeId, contractAddress, encodedData } = req.body
     const node = await prisma.node.findUnique({
       where: {
         id: Number(nodeId),
@@ -189,7 +191,6 @@ export namespace NodeRouter {
     const txReceipt = await ethereumService.callRaw(
       contractAddress,
       encodedData,
-      callerAddress,
     )
     if (!txReceipt) {
       return res.status(500).json({
