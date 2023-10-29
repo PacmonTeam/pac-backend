@@ -65,6 +65,10 @@ export namespace EthereumService {
         .connect(signer)
         .deploy(...contractInput.constructorArguments)
       const contract = (await tx.waitForDeployment()) as Contract
+      const deployTx = tx.deploymentTransaction()
+      if (deployTx) {
+        const receipt = await deployTx.wait()
+      }
       return contract
     }
 

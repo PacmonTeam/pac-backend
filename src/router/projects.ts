@@ -327,7 +327,18 @@ export namespace ProjectRouter {
 
         if (deployCmd.functions) {
           for (const func of deployCmd.functions) {
-            await ethereumService.call(contract, func.name, func.arguments)
+            const tx = await ethereumService.call(
+              contract,
+              func.name,
+              func.arguments,
+            )
+            console.log(
+              'contract called',
+              contractName,
+              address,
+              func.name,
+              tx?.hash,
+            )
           }
         }
       }
