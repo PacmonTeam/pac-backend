@@ -194,7 +194,7 @@ interface AggregatorV3Interface {
 
 // Original license: SPDX_License_Identifier: MIT
 
-pragma solidity =0.8.20;
+pragma solidity =0.8.19;
 
 
 
@@ -246,7 +246,6 @@ contract PacDemo {
     function getPrice0() public view returns (uint256 price) {
         (, int256 price0, , , ) = AggregatorV3Interface(pricefeed0)
             .latestRoundData();
-        uint256 decimals0 = IERC20(token0).decimals();
         price =
             (uint256(price0) * PRICE_PRECISION) /
             (10 ** AggregatorV3Interface(pricefeed0).decimals());
@@ -365,17 +364,17 @@ contract PacDemo {
         uint256 value1 = getValue1(msg.sender);
 
         if (value0 > value1) {
-            uint256 amount = ((value0 - value1) * balance0) /
-                PRICE_PRECISION /
-                2;
+            uint256 valueDiff = value0 - value1;
+            uint256 amount = ((valueDiff * balance0) / value0 / 2);
             balances0[msg.sender] -= amount;
-            _swap(token0, token1, amount);
+            uint256 amountOut = _swap(token0, token1, amount);
+            balances1[msg.sender] += amountOut;
         } else if (value0 < value1) {
-            uint256 amount = ((value1 - value0) * balance1) /
-                PRICE_PRECISION /
-                2;
+            uint256 valueDiff = value1 - value0;
+            uint256 amount = ((valueDiff * balance1) / value1 / 2);
             balances1[msg.sender] -= amount;
-            _swap(token1, token0, amount);
+            uint256 amountOut = _swap(token1, token0, amount);
+            balances0[msg.sender] += amountOut;
         }
     }
 
@@ -407,7 +406,11 @@ contract PacDemo {
         return IERC20(toToken).balanceOf(address(this));
     }
 
-    function _swap(address fromToken, address toToken, uint256 amount) public {
+    function _swap(
+        address fromToken,
+        address toToken,
+        uint256 amount
+    ) internal returns (uint256 amountOut) {
         address pairToken0 = IUniswapV2Pair(pair).token0();
         (uint256 reserve0, uint256 reserve1, ) = IUniswapV2Pair(pair)
             .getReserves();
@@ -415,7 +418,7 @@ contract PacDemo {
         (uint256 reserveFrom, uint256 reserveTo) = fromToken == pairToken0
             ? (reserve0, reserve1)
             : (reserve1, reserve0);
-        uint256 amountOut = _getAmountOut(amount, reserveFrom, reserveTo);
+        amountOut = _getAmountOut(amount, reserveFrom, reserveTo);
         if (toToken == token0) {
             IUniswapV2Pair(pair).swap(amountOut, 0, address(this), '');
         } else {

@@ -6,7 +6,7 @@
 
 // Original license: SPDX_License_Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.0.0) (interfaces/draft-IERC6093.sol)
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 /**
  * @dev Standard ERC20 Errors
@@ -19,7 +19,11 @@ interface IERC20Errors {
      * @param balance Current balance for the interacting account.
      * @param needed Minimum amount required to perform a transfer.
      */
-    error ERC20InsufficientBalance(address sender, uint256 balance, uint256 needed);
+    error ERC20InsufficientBalance(
+        address sender,
+        uint256 balance,
+        uint256 needed
+    );
 
     /**
      * @dev Indicates a failure with the token `sender`. Used in transfers.
@@ -39,7 +43,11 @@ interface IERC20Errors {
      * @param allowance Amount of tokens a `spender` is allowed to operate with.
      * @param needed Minimum amount required to perform a transfer.
      */
-    error ERC20InsufficientAllowance(address spender, uint256 allowance, uint256 needed);
+    error ERC20InsufficientAllowance(
+        address spender,
+        uint256 allowance,
+        uint256 needed
+    );
 
     /**
      * @dev Indicates a failure with the `approver` of a token to be approved. Used in approvals.
@@ -124,7 +132,12 @@ interface IERC1155Errors {
      * @param needed Minimum amount required to perform a transfer.
      * @param tokenId Identifier number of a token.
      */
-    error ERC1155InsufficientBalance(address sender, uint256 balance, uint256 needed, uint256 tokenId);
+    error ERC1155InsufficientBalance(
+        address sender,
+        uint256 balance,
+        uint256 needed,
+        uint256 tokenId
+    );
 
     /**
      * @dev Indicates a failure with the token `sender`. Used in transfers.
@@ -166,13 +179,12 @@ interface IERC1155Errors {
     error ERC1155InvalidArrayLength(uint256 idsLength, uint256 valuesLength);
 }
 
-
 // File @openzeppelin/contracts/token/ERC20/IERC20.sol@v5.0.0
 
 // Original license: SPDX_License_Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -190,7 +202,11 @@ interface IERC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     /**
      * @dev Returns the value of tokens in existence.
@@ -218,7 +234,10 @@ interface IERC20 {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address owner, address spender) external view returns (uint256);
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256);
 
     /**
      * @dev Sets a `value` amount of tokens as the allowance of `spender` over the
@@ -246,16 +265,19 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address from, address to, uint256 value) external returns (bool);
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) external returns (bool);
 }
-
 
 // File @openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol@v5.0.0
 
 // Original license: SPDX_License_Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/extensions/IERC20Metadata.sol)
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 /**
  * @dev Interface for the optional metadata functions from the ERC20 standard.
@@ -277,13 +299,12 @@ interface IERC20Metadata is IERC20 {
     function decimals() external view returns (uint8);
 }
 
-
 // File @openzeppelin/contracts/utils/Context.sol@v5.0.0
 
 // Original license: SPDX_License_Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.0.0) (utils/Context.sol)
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -305,16 +326,12 @@ abstract contract Context {
     }
 }
 
-
 // File @openzeppelin/contracts/token/ERC20/ERC20.sol@v5.0.0
 
 // Original license: SPDX_License_Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/ERC20.sol)
 
-pragma solidity ^0.8.20;
-
-
-
+pragma solidity ^0.8.19;
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -342,7 +359,8 @@ pragma solidity ^0.8.20;
 abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
     mapping(address account => uint256) private _balances;
 
-    mapping(address account => mapping(address spender => uint256)) private _allowances;
+    mapping(address account => mapping(address spender => uint256))
+        private _allowances;
 
     uint256 private _totalSupply;
 
@@ -423,7 +441,10 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
     /**
      * @dev See {IERC20-allowance}.
      */
-    function allowance(address owner, address spender) public view virtual returns (uint256) {
+    function allowance(
+        address owner,
+        address spender
+    ) public view virtual returns (uint256) {
         return _allowances[owner][spender];
     }
 
@@ -437,7 +458,10 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      *
      * - `spender` cannot be the zero address.
      */
-    function approve(address spender, uint256 value) public virtual returns (bool) {
+    function approve(
+        address spender,
+        uint256 value
+    ) public virtual returns (bool) {
         address owner = _msgSender();
         _approve(owner, spender, value);
         return true;
@@ -459,7 +483,11 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      * - the caller must have allowance for ``from``'s tokens of at least
      * `value`.
      */
-    function transferFrom(address from, address to, uint256 value) public virtual returns (bool) {
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) public virtual returns (bool) {
         address spender = _msgSender();
         _spendAllowance(from, spender, value);
         _transfer(from, to, value);
@@ -589,7 +617,12 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      *
      * Requirements are the same as {_approve}.
      */
-    function _approve(address owner, address spender, uint256 value, bool emitEvent) internal virtual {
+    function _approve(
+        address owner,
+        address spender,
+        uint256 value,
+        bool emitEvent
+    ) internal virtual {
         if (owner == address(0)) {
             revert ERC20InvalidApprover(address(0));
         }
@@ -610,11 +643,19 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
      *
      * Does not emit an {Approval} event.
      */
-    function _spendAllowance(address owner, address spender, uint256 value) internal virtual {
+    function _spendAllowance(
+        address owner,
+        address spender,
+        uint256 value
+    ) internal virtual {
         uint256 currentAllowance = allowance(owner, spender);
         if (currentAllowance != type(uint256).max) {
             if (currentAllowance < value) {
-                revert ERC20InsufficientAllowance(spender, currentAllowance, value);
+                revert ERC20InsufficientAllowance(
+                    spender,
+                    currentAllowance,
+                    value
+                );
             }
             unchecked {
                 _approve(owner, spender, currentAllowance - value, false);
@@ -622,7 +663,6 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
         }
     }
 }
-
 
 // File contracts/interfaces/IPacERC20.sol
 
@@ -639,12 +679,11 @@ interface IPacERC20 {
     function burn(uint256 value) external returns (bool);
 }
 
-
 // File contracts/PacERC20.sol
 
 // Original license: SPDX_License_Identifier: UNLICENSED
 
-pragma solidity =0.8.20;
+pragma solidity =0.8.19;
 
 contract PacERC20 is ERC20, IPacERC20 {
     uint8 private immutable __decimals;

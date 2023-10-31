@@ -144,7 +144,6 @@ export namespace AdminRouter {
         const contract = await ethereumService.deploy({
           contractFactory: compileOutput[contractName].contractFactory,
           constructorArguments: deployCmd.constructor || [],
-          deployerAddress,
         })
         const address = await contract.getAddress()
         console.log('contract deployed', address, contractName)
@@ -162,12 +161,7 @@ export namespace AdminRouter {
 
         if (deployCmd.functions) {
           for (const func of deployCmd.functions) {
-            await ethereumService.call(
-              contract,
-              func.name,
-              func.arguments,
-              deployerAddress,
-            )
+            await ethereumService.call(contract, func.name, func.arguments)
           }
         }
       }

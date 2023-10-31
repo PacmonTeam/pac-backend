@@ -54,7 +54,6 @@ interface IUniswapV2ERC20 {
     ) external;
 }
 
-
 // File contracts/interfaces/IUniswapV2Pair.sol
 
 // Original license: SPDX_License_Identifier: MIT
@@ -114,7 +113,6 @@ interface IUniswapV2Pair is IUniswapV2ERC20 {
     function initialize(address, address) external;
 }
 
-
 // File contracts/interfaces/IPacUniswapV2Pair.sol
 
 // Original license: SPDX_License_Identifier: MIT
@@ -130,13 +128,12 @@ interface IPacUniswapV2Pair is IUniswapV2Pair {
     ) external returns (bool);
 }
 
-
 // File @openzeppelin/contracts/token/ERC20/IERC20.sol@v5.0.0
 
 // Original license: SPDX_License_Identifier: MIT
 // OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/IERC20.sol)
 
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.19;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -154,7 +151,11 @@ interface IERC20 {
      * @dev Emitted when the allowance of a `spender` for an `owner` is set by
      * a call to {approve}. `value` is the new allowance.
      */
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     /**
      * @dev Returns the value of tokens in existence.
@@ -182,7 +183,10 @@ interface IERC20 {
      *
      * This value changes when {approve} or {transferFrom} are called.
      */
-    function allowance(address owner, address spender) external view returns (uint256);
+    function allowance(
+        address owner,
+        address spender
+    ) external view returns (uint256);
 
     /**
      * @dev Sets a `value` amount of tokens as the allowance of `spender` over the
@@ -210,9 +214,12 @@ interface IERC20 {
      *
      * Emits a {Transfer} event.
      */
-    function transferFrom(address from, address to, uint256 value) external returns (bool);
+    function transferFrom(
+        address from,
+        address to,
+        uint256 value
+    ) external returns (bool);
 }
-
 
 // File contracts/interfaces/IPacERC20.sol
 
@@ -229,7 +236,6 @@ interface IPacERC20 {
     function burn(uint256 value) external returns (bool);
 }
 
-
 // File contracts/interfaces/IUniswapV2Callee.sol
 
 // Original license: SPDX_License_Identifier: MIT
@@ -245,12 +251,11 @@ interface IUniswapV2Callee {
     ) external;
 }
 
-
 // File contracts/libraries/Math.sol
 
 // Original license: SPDX_License_Identifier: MIT
 
-pragma solidity =0.8.20;
+pragma solidity =0.8.19;
 
 // a library for performing various math operations
 
@@ -274,12 +279,11 @@ library Math {
     }
 }
 
-
 // File contracts/libraries/UQ112x112.sol
 
 // Original license: SPDX_License_Identifier: MIT
 
-pragma solidity =0.8.20;
+pragma solidity =0.8.19;
 
 // a library for handling binary fixed point numbers (https://en.wikipedia.org/wiki/Q_(number_format))
 
@@ -300,12 +304,11 @@ library UQ112x112 {
     }
 }
 
-
 // File contracts/UniswapV2ERC20.sol
 
 // Original license: SPDX_License_Identifier: MIT
 
-pragma solidity =0.8.20;
+pragma solidity =0.8.19;
 
 //solhint-disable var-name-mixedcase
 //solhint-disable reason-string
@@ -426,17 +429,11 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
     }
 }
 
-
 // File contracts/PacUniswapV2Pair.sol
 
 // Original license: SPDX_License_Identifier: MIT
 
-pragma solidity =0.8.20;
-
-
-
-
-
+pragma solidity =0.8.19;
 
 //solhint-disable func-name-mixedcase
 //solhint-disable avoid-low-level-calls
