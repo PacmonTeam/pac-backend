@@ -111,6 +111,12 @@ export namespace ProjectRouter {
 
     const sequences = _.map(templates, (template) => template.sequence)
 
+    await prisma.template.deleteMany({
+      where: {
+        projectId: id,
+      },
+    })
+
     const createdTemplates: Template[] = await prisma.$transaction(
       _.map(templates, (template) =>
         prisma.template.upsert({
@@ -140,15 +146,6 @@ export namespace ProjectRouter {
         }),
       ),
     )
-
-    await prisma.template.deleteMany({
-      where: {
-        projectId: id,
-        sequence: {
-          notIn: sequences,
-        },
-      },
-    })
 
     res.json({
       id: project.id,
