@@ -46,10 +46,21 @@ export namespace EthereumService {
   }
 
   export class Service {
+    private _nonces: { [addr: string]: number } = {}
     private _provider: ethers.JsonRpcProvider
 
     constructor(rpcUrl: string) {
       this._provider = new ethers.JsonRpcProvider(rpcUrl)
+    }
+
+    private async _getNonce(addr: string) {
+      const nonce = this._nonces[addr]
+      if (nonce === undefined) {
+        this._nonces[addr] = await this._provider.getTransactionCount(addr)
+      } else {
+        ++this._nonces[addr]
+      }
+      return this._nonces[addr]
     }
 
     getDefaultSigner = async () => {
@@ -61,14 +72,17 @@ export namespace EthereumService {
     deploy = async (contractInput: IDeployContractInput) => {
       const signer = await this.getDefaultSigner()
       const contractFactory = contractInput.contractFactory
+      const nonce = await this._getNonce(signer.address)
       const tx = await contractFactory
         .connect(signer)
-        .deploy(...contractInput.constructorArguments)
-      const contract = (await tx.waitForDeployment()) as Contract
-      const deployTx = tx.deploymentTransaction()
-      if (deployTx) {
-        const receipt = await deployTx.wait()
-      }
+        .deploy(...contractInput.constructorArguments, {
+          nonce,
+        })
+      const contract = tx as Contract
+      // const deployTx = tx.deploymentTransaction()
+      // if (deployTx) {
+      //   const receipt = await deployTx.wait()
+      // }
       return contract
     }
 
@@ -124,32 +138,44 @@ export namespace EthereumService {
       return out
     }
 
-    call = async (contract: ethers.Contract, method: string, args: any[]) => {
+    call = async (
+      contract: ethers.Contract,
+      method: string,
+      args: any[],
+      wait?: boolean,
+    ) => {
       const signer = await this.getDefaultSigner()
+      const nonce = await this._getNonce(signer.address)
       const tx: ethers.ContractTransactionResponse = await contract
         .connect(signer)
-        [method](...args)
-      const receipt = await tx.wait()
-      return receipt
+        [method](...args, {
+          nonce,
+        })
+      if (wait) await tx.wait()
+      return tx
     }
 
-    callRaw = async (contractAddress: string, encodedCallData: string) => {
+    callRaw = async (
+      contractAddress: string,
+      encodedCallData: string,
+      wait?: boolean,
+    ) => {
       const signer = await this.getDefaultSigner()
-      const txCount = await this._provider.getTransactionCount(signer.address)
+      const nonce = await this._getNonce(signer.address)
       const tt = await signer.estimateGas({
         data: encodedCallData,
         to: contractAddress,
         from: signer.address,
-        nonce: txCount,
+        nonce,
       })
       const tx: ethers.TransactionResponse = await signer.sendTransaction({
         data: encodedCallData,
         to: contractAddress,
         from: signer.address,
-        nonce: txCount,
+        nonce,
       })
-      const receipt = await tx.wait()
-      return receipt
+      if (wait) await tx.wait()
+      return tx
     }
 
     getContract = async (address: string): Promise<ethers.Contract> => {

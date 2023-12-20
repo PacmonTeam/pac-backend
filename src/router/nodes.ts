@@ -191,6 +191,7 @@ export namespace NodeRouter {
     const txReceipt = await ethereumService.callRaw(
       contractAddress,
       encodedData,
+      true,
     )
     if (!txReceipt) {
       return res.status(500).json({
