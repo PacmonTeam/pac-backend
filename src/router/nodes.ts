@@ -47,7 +47,11 @@ export namespace NodeRouter {
       },
       include: {
         project: true,
-        contracts: true,
+        contracts: {
+          orderBy: {
+            sequence: 'asc',
+          },
+        },
       },
     })
     if (!node) {

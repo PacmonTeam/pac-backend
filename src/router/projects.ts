@@ -171,7 +171,11 @@ export namespace ProjectRouter {
         id: Number(projectId),
       },
       include: {
-        templates: true,
+        templates: {
+          orderBy: {
+            sequence: 'asc',
+          },
+        },
       },
     })
 
@@ -263,6 +267,9 @@ export namespace ProjectRouter {
           where: {
             status: 'ACTIVE',
           },
+          orderBy: {
+            sequence: 'asc',
+          },
         },
       },
     })
@@ -351,7 +358,11 @@ export namespace ProjectRouter {
       },
       include: {
         project: true,
-        contracts: true,
+        contracts: {
+          orderBy: {
+            sequence: 'asc',
+          },
+        },
       },
     })
     if (!nodeResult) {
