@@ -9,7 +9,7 @@ FROM golang:1.21 AS maker
 WORKDIR /app
 
 COPY --from=cloner /app/erigon ./
-RUN make rpcdaemon
+RUN make BUILD_TAGS=nosqlite,noboltdb,nosilkworm rpcdaemon
 
 FROM golang:1.21
 
